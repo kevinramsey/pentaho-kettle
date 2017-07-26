@@ -36,13 +36,16 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+
 import java.util.concurrent.ThreadFactory;
+
 import java.util.concurrent.TimeUnit;
 
 
 public class CarteStatusCache implements Cache {
 
   public static final String CARTE_STATUS_CACHE = "CARTE_CACHE";
+
 
   /**
    * Switching the thread launched to be daemon otherwise it blocks the pentaho server shutdown
@@ -57,6 +60,7 @@ public class CarteStatusCache implements Cache {
       }
     } );
 
+
   private final Map<String, CachedItem> cachedMap = new ConcurrentHashMap<>();
 
   private static CarteStatusCache instance = null;
@@ -64,6 +68,8 @@ public class CarteStatusCache implements Cache {
   private int period = 0;
 
   private TimeUnit timeUnit = null;
+
+
 
   public static synchronized CarteStatusCache getInstance() {
     if ( instance == null ) {
@@ -75,6 +81,7 @@ public class CarteStatusCache implements Cache {
   private CarteStatusCache() {
     period = Integer.parseInt( Const.getEnvironmentVariable( "CARTE_CLEAR_PERIOD", "1" ) );
     timeUnit = TimeUnit.valueOf( Const.getEnvironmentVariable( "CARTE_CLEAR_TIMEUNIT", "DAYS" ) );
+
 
     removeService.scheduleAtFixedRate( this::clear, 1, 1, TimeUnit.DAYS );
   }

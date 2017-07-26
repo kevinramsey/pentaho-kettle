@@ -31,6 +31,7 @@ import java.nio.charset.Charset;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.HEAD;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.owasp.encoder.Encode;
@@ -58,7 +59,9 @@ public class GetTransStatusServlet extends BaseHttpServlet implements CartePlugi
 
   public static final String CONTEXT_PATH = "/kettle/transStatus";
 
+
   public static final String SEND_RESULT = "sendResult";
+
 
   private static final byte[] XML_HEADER =
     XMLHandler.getXMLHeader( Const.XML_ENCODING ).getBytes( Charset.forName( Const.XML_ENCODING ) );
@@ -254,9 +257,11 @@ public class GetTransStatusServlet extends BaseHttpServlet implements CartePlugi
           byte[] data = null;
           String logId = trans.getLogChannelId();
           boolean finishedOrStopped = trans.isFinishedOrStopped();
+
           boolean sendResultXmlWithStatus = "Y".equalsIgnoreCase( request.getParameter( SEND_RESULT ) );
           boolean dontUseCache = sendResultXmlWithStatus;
           if ( finishedOrStopped && ( data = cache.get( logId, startLineNr ) ) != null && !dontUseCache ) {
+
             response.setContentLength( XML_HEADER.length + data.length );
             out = response.getOutputStream();
             out.write( XML_HEADER );
@@ -301,14 +306,18 @@ public class GetTransStatusServlet extends BaseHttpServlet implements CartePlugi
 
             // Send the result back as XML
             //
+
             String xml = transStatus.getXML( sendResultXmlWithStatus );
+
             data = xml.getBytes( Charset.forName( Const.XML_ENCODING ) );
             out = response.getOutputStream();
             response.setContentLength( XML_HEADER.length + data.length );
             out.write( XML_HEADER );
             out.write( data );
             out.flush();
+
             if ( finishedOrStopped && logId != null && !dontUseCache ) {
+
               cache.put( logId, xml, startLineNr );
             }
           }
@@ -321,7 +330,9 @@ public class GetTransStatusServlet extends BaseHttpServlet implements CartePlugi
         PrintWriter out = response.getWriter();
 
         int lastLineNr = KettleLogStore.getLastBufferLineNr();
+
         int tableBorder = 0;
+
 
         response.setContentType( "text/html;charset=UTF-8" );
 
@@ -345,6 +356,7 @@ public class GetTransStatusServlet extends BaseHttpServlet implements CartePlugi
         out.println( "</div>" );
 
         try {
+
           out.println( "<div class=\"row\" style=\"padding: 0px 0px 0px 30px\">" );
           out.println( "<div class=\"row\" style=\"padding-top: 30px;\">" );
           out.print( "<a href=\"" + convertContextPath( GetStatusServlet.CONTEXT_PATH ) + "\">" );
@@ -367,6 +379,7 @@ public class GetTransStatusServlet extends BaseHttpServlet implements CartePlugi
           out.print( "<td style=\"padding: 8px 10px 10px 10px\" class=\"cellTableCell\" id=\"statusColor\" style=\"font-weight: bold;\">" + Encode.forHtml( trans.getStatus() ) + "</td>" );
           String dateStr = XMLHandler.date2string( trans.getLogDate() );
           out.print( "<td style=\"padding: 8px 10px 10px 10px\" class=\"cellTableCell cellTableLastColumn\">" + dateStr.substring( 0, dateStr.indexOf( ' ' ) ) + "</td>" );
+
           out.print( "</tr>" );
           out.print( "</table>" );
           out.print( "</div>" );
@@ -468,6 +481,7 @@ public class GetTransStatusServlet extends BaseHttpServlet implements CartePlugi
           out.print( "<div class=\"workspaceHeading\" style=\"padding: 0px 0px 30px 0px;\">Transformation log</div>" );
           out
             .println( "<textarea id=\"translog\" cols=\"120\" rows=\"20\" "
+
               + "wrap=\"off\" name=\"Transformation log\" readonly=\"readonly\" style=\"height: auto;\">"
               + Encode.forHtml( getLogText( trans, startLineNr, lastLineNr ) ) + "</textarea>" );
           out.print( "</div>" );
@@ -482,6 +496,7 @@ public class GetTransStatusServlet extends BaseHttpServlet implements CartePlugi
           out.println( "element.style.color = '#F1C40F';" );
           out.println( "}" );
           out.println( "</script>" );
+
           out.println( "<script type=\"text/javascript\"> " );
           out.println( "  translog.scrollTop=translog.scrollHeight; " );
           out.println( "</script> " );

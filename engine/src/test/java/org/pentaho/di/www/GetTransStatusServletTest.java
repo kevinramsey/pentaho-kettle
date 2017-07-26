@@ -149,7 +149,9 @@ public class GetTransStatusServletTest {
 
     verify( cacheMock, times( 2 ) ).get( logId, 0 );
     verify( cacheMock, times( 1 ) ).put( eq( logId ), anyString(), eq( 0 ) );
+
     verify( mockTrans, times( 1 ) ).getLogChannel();
+
 
   }
 

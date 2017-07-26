@@ -31,6 +31,7 @@ import java.nio.charset.Charset;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.HEAD;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.owasp.encoder.Encode;
@@ -296,7 +297,9 @@ public class GetJobStatusServlet extends BaseHttpServlet implements CartePluginI
         PrintWriter out = response.getWriter();
 
         int lastLineNr = KettleLogStore.getLastBufferLineNr();
+
         int tableBorder = 0;
+
 
         response.setContentType( "text/html" );
 
@@ -320,6 +323,7 @@ public class GetJobStatusServlet extends BaseHttpServlet implements CartePluginI
         out.println( "</div>" );
 
         try {
+
           out.println( "<div class=\"row\" style=\"padding: 0px 0px 0px 30px\">" );
           out.println( "<div class=\"row\" style=\"padding-top: 30px;\">" );
           out.print( "<a href=\"" + convertContextPath( GetStatusServlet.CONTEXT_PATH ) + "\">" );
@@ -342,6 +346,7 @@ public class GetJobStatusServlet extends BaseHttpServlet implements CartePluginI
           out.print( "<td style=\"padding: 8px 10px 10px 10px\" class=\"cellTableCell\" id=\"statusColor\" style=\"font-weight: bold;\">" + job.getStatus() + "</td>" );
           String dateStr = XMLHandler.date2string( job.getLogDate() );
           out.print( "<td style=\"padding: 8px 10px 10px 10px\" class=\"cellTableCell cellTableLastColumn\">" + dateStr.substring( 0, dateStr.indexOf( ' ' ) ) + "</td>" );
+
           out.print( "</tr>" );
           out.print( "</table>" );
           out.print( "</div>" );
@@ -387,6 +392,7 @@ public class GetJobStatusServlet extends BaseHttpServlet implements CartePluginI
           out.print( "<div class=\"row\" style=\"padding: 0px 0px 30px 0px;\">" );
           out.print( "<div class=\"workspaceHeading\">Job log</div>" );
           out.println( "<textarea id=\"joblog\" cols=\"120\" rows=\"20\" wrap=\"off\" "
+
               + "name=\"Job log\" readonly=\"readonly\" style=\"height: auto;\">"
               + Encode.forHtml( getLogText( job, startLineNr, lastLineNr ) ) + "</textarea>" );
           out.print( "</div>" );
@@ -401,6 +407,7 @@ public class GetJobStatusServlet extends BaseHttpServlet implements CartePluginI
           out.println( "element.style.color = '#F1C40F';" );
           out.println( "}" );
           out.println( "</script>" );
+
           out.println( "<script type=\"text/javascript\"> " );
           out.println( "  joblog.scrollTop=joblog.scrollHeight; " );
           out.println( "</script> " );

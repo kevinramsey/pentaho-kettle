@@ -25,6 +25,7 @@ package org.pentaho.di.core.logging;
 import com.google.common.annotations.VisibleForTesting;
 import org.pentaho.di.core.Const;
 
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,6 +34,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,8 +46,10 @@ import java.util.stream.Stream;
 public class LoggingBuffer {
   private String name;
 
+
   private List<BufferLine> buffer;
   private ReadWriteLock lock = new ReentrantReadWriteLock();
+
 
   private int bufferSize;
 
@@ -57,18 +61,21 @@ public class LoggingBuffer {
 
   public LoggingBuffer( int bufferSize ) {
     this.bufferSize = bufferSize;
+
     // The buffer overflow protection allows it to be overflowed for 1 item within a single thread.
     // Considering a possible high contention, let's set it's max overflow size to be 10%.
     // Anyway, even an overflow goes higher than 10%, it wouldn't cost us too much.
     buffer = new ArrayList<>( (int) ( bufferSize * 1.1 ) );
     layout = new KettleLogLayout( true );
     eventListeners = new CopyOnWriteArrayList<>();
+
   }
 
   /**
    * @return the number (sequence, 1..N) of the last log line. If no records are present in the buffer, 0 is returned.
    */
   public int getLastBufferLineNr() {
+
     lock.readLock().lock();
     try {
       if ( buffer.size() > 0 ) {
@@ -79,6 +86,7 @@ public class LoggingBuffer {
     } finally {
       lock.readLock().unlock();
     }
+
   }
 
   /**
@@ -90,6 +98,7 @@ public class LoggingBuffer {
    */
   public List<KettleLoggingEvent> getLogBufferFromTo( List<String> channelId, boolean includeGeneral, int from,
                                                       int to ) {
+
     lock.readLock().lock();
     try {
       Stream<BufferLine> bufferStream = buffer.stream().filter( line -> line.getNr() > from && line.getNr() <= to );
@@ -103,6 +112,7 @@ public class LoggingBuffer {
     } finally {
       lock.readLock().unlock();
     }
+
   }
 
   /**
@@ -153,6 +163,7 @@ public class LoggingBuffer {
 
   public void doAppend( KettleLoggingEvent event ) {
     if ( event.getMessage() instanceof LogMessage ) {
+
       lock.writeLock().lock();
       try {
         buffer.add( new BufferLine( event ) );
@@ -161,6 +172,7 @@ public class LoggingBuffer {
         }
       } finally {
         lock.writeLock().unlock();
+
       }
     }
   }
@@ -227,6 +239,7 @@ public class LoggingBuffer {
     } finally {
       lock.writeLock().unlock();
     }
+
   }
 
   public int size() {
@@ -240,6 +253,7 @@ public class LoggingBuffer {
     } finally {
       lock.writeLock().unlock();
     }
+
   }
 
   /**
@@ -261,6 +275,7 @@ public class LoggingBuffer {
   @Deprecated
   public String dump() {
     StringBuilder buf = new StringBuilder( 50000 );
+
     lock.readLock().lock();
     try {
       buffer.forEach( line -> {
@@ -272,6 +287,7 @@ public class LoggingBuffer {
     } finally {
       lock.readLock().unlock();
     }
+
   }
 
   /**
@@ -296,6 +312,7 @@ public class LoggingBuffer {
    */
   @Deprecated
   public List<BufferLine> getBufferLinesBefore( long minTimeBoundary ) {
+
     lock.readLock().lock();
     try {
       return buffer.stream().filter( line -> line.getEvent().timeStamp < minTimeBoundary )
@@ -325,6 +342,7 @@ public class LoggingBuffer {
     } finally {
       lock.writeLock().unlock();
     }
+
   }
 
   public void addLogggingEvent( KettleLoggingEvent loggingEvent ) {
@@ -345,7 +363,9 @@ public class LoggingBuffer {
     return loggingObject != null && LoggingObjectType.GENERAL.equals( loggingObject.getObjectType() );
   }
 
+
   private static String getLogChId( BufferLine bufferLine ) {
+
     return ( (LogMessage) bufferLine.getEvent().getMessage() ).getLogChannelId();
   }
 }
