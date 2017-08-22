@@ -27,8 +27,9 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
-
+import javax.ws.rs.HEAD;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -94,7 +95,9 @@ public class XMLInputStream extends BaseStep implements StepInterface {
       }
       openNextFile();
       resetElementCounters();
+
       prepareProcessPreviousFields();
+
     }
 
     Object[] outputRowData;
@@ -112,7 +115,9 @@ public class XMLInputStream extends BaseStep implements StepInterface {
           throw new KettleException( BaseMessages.getString( PKG, "XMLInputStream.FilenameFieldNotFound",
               meta.sourceFieldName ) );
         }
+
         prepareProcessPreviousFields();
+
       }
       if ( data.xmlEventReader == null ) {
         if ( row == null ) {
@@ -312,7 +317,9 @@ public class XMLInputStream extends BaseStep implements StepInterface {
       if ( data.currentInputRow != null ) {
         r = RowDataUtil.addRowData( (Object[]) data.currentInputRow.clone(), data.previousFieldsNumber, r );
       }
+
       putRow( data.finalOutputRowMeta, r );
+
     }
   }
 
