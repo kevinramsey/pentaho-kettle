@@ -22,6 +22,8 @@
 
 package org.pentaho.di.trans.steps.mapping;
 
+
+
 import org.pentaho.di.core.CheckResult;
 import org.pentaho.di.core.CheckResultInterface;
 import org.pentaho.di.core.Const;

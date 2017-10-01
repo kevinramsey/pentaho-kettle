@@ -48,9 +48,14 @@ import org.pentaho.di.repository.RepositoryDirectory;
 import org.pentaho.di.repository.RepositoryDirectoryInterface;
 import org.pentaho.di.resource.ResourceDefinition;
 import org.pentaho.di.resource.ResourceNamingInterface;
+
 import org.pentaho.di.trans.step.StepMetaInterface;
 import org.pentaho.di.trans.steps.mapping.MappingIODefinition;
+
 import org.pentaho.metastore.api.IMetaStore;
+
+import javax.ws.rs.HEAD;
+import java.util.Map;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -398,6 +403,7 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
       //
       String newFilename = "${" + INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY + "}/" + proposedNewFilename;
 
+
       // Set the correct filename inside the XML.
       //
       mappingTransMeta.setFilename( newFilename );
@@ -409,7 +415,9 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
 
       // change it in the job entry
       //
+
       replaceFileName( newFilename );
+
 
       setSpecificationMethod( ObjectLocationSpecificationMethod.FILENAME );
 
@@ -418,6 +426,7 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
       throw new KettleException( BaseMessages.getString( PKG, "StepWithMappingMeta.Exception.UnableToLoadTrans", fileName ) );
     }
   }
+
 
   public static  void addMissingVariables( VariableSpace fromSpace, VariableSpace toSpace ) {
     if ( toSpace == null ) {
@@ -456,4 +465,5 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
   public List<MappingIODefinition> getOutputMappings() {
     return Collections.emptyList();
   }
+
 }

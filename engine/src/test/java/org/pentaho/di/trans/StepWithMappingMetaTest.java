@@ -30,13 +30,16 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.pentaho.di.core.Const;
+
 import org.pentaho.di.core.KettleEnvironment;
+
 import org.pentaho.di.core.ObjectLocationSpecificationMethod;
 import org.pentaho.di.core.ProgressMonitorListener;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.core.variables.Variables;
 import org.pentaho.di.repository.Repository;
 import org.pentaho.di.repository.RepositoryDirectoryInterface;
+
 import org.pentaho.di.trans.step.StepDataInterface;
 import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
@@ -47,6 +50,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyBoolean;
@@ -56,6 +60,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyMap;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+
 
 
 /**
@@ -67,6 +75,7 @@ public class StepWithMappingMetaTest {
   @Mock
   TransMeta transMeta;
 
+
   @Before
   public void setupBefore() throws Exception {
     // Without initialization of the Kettle Environment, the load of the transformation fails
@@ -75,6 +84,7 @@ public class StepWithMappingMetaTest {
     // at all. Initializing the environment fixed everything.
     KettleEnvironment.init();
   }
+
 
   @Test
   public void loadMappingMeta() throws Exception {
@@ -124,6 +134,7 @@ public class StepWithMappingMetaTest {
     StepWithMappingMeta.loadMappingMeta( mappingMetaMock, rep, null, variables, true );
   }
 
+
   @SuppressWarnings( "unchecked" )
   @Test
   @PrepareForTest( StepWithMappingMeta.class )
@@ -144,12 +155,14 @@ public class StepWithMappingMetaTest {
         return null;
       }
     } );
+
     String testName = "test";
     PowerMockito.mockStatic( StepWithMappingMeta.class );
     when( StepWithMappingMeta.loadMappingMeta( any(), any(), any(), any() ) ).thenReturn( transMeta );
     when( transMeta.exportResources( any(), anyMap(), any(), any(), any() ) ).thenReturn( testName );
 
     stepWithMappingMeta.exportResources( null, null, null, null, null );
+
     verify( transMeta ).setFilename( "${" + Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY + "}/" + testName );
     verify( stepWithMappingMeta ).setSpecificationMethod( ObjectLocationSpecificationMethod.FILENAME );
   }
@@ -388,5 +401,6 @@ public class StepWithMappingMetaTest {
     Mockito.verify( rep, Mockito.times( 1 ) ).findDirectory( Mockito.eq( transDirectory ) );
     Mockito.verify( rep, Mockito.times( 1 ) ).loadTransformation( Mockito.eq( transName ),
       Mockito.eq( directoryInterface ), Mockito.eq( null ), Mockito.eq( true ), Mockito.eq( null ) );
+
   }
 }
