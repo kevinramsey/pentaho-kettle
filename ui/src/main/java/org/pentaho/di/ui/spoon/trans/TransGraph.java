@@ -3217,8 +3217,10 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
       }
     } else {
       if ( !alreadyThrownError ) {
+
         modalMessageDialog( getString( "TransGraph.Dialog.CouldntFindFields.Title" ),
           getString( "TransGraph.Dialog.CouldntFindFields.Message" ), SWT.OK | SWT.ICON_INFORMATION );
+
       }
     }
 
