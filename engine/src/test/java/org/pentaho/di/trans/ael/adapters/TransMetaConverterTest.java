@@ -24,6 +24,7 @@
 
 package org.pentaho.di.trans.ael.adapters;
 
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
