@@ -16,9 +16,12 @@
  */
 package org.pentaho.di.repository.pur;
 
+import com.sun.jersey.spi.inject.Errors;
+import org.pentaho.di.core.logging.LogChannelInterface;
 import com.pentaho.pdi.ws.IRepositorySyncWebService;
 import com.pentaho.pdi.ws.RepositorySyncException;
 import com.sun.xml.ws.client.ClientTransportException;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -65,10 +68,10 @@ public class PurRepositoryConnector implements IRepositoryConnector {
   private static final String REMOTE_DI_SERVER_INSTANCE = "remoteDiServerInstance";
   private static Class<?> PKG = PurRepository.class;
   private final LogChannelInterface log;
-  private final PurRepository purRepository;
-  private final PurRepositoryMeta repositoryMeta;
-  private final RootRef rootRef;
-  private ServiceManager serviceManager;
+  private final PurRepository       purRepository;
+  private final PurRepositoryMeta   repositoryMeta;
+  private final RootRef             rootRef;
+  private       ServiceManager      serviceManager;
 
   public PurRepositoryConnector( PurRepository purRepository, PurRepositoryMeta repositoryMeta, RootRef rootRef ) {
     log = new LogChannel( this.getClass().getSimpleName() );
@@ -243,6 +246,7 @@ public class PurRepositoryConnector implements IRepositoryConnector {
             if ( log.isBasic() ) {
               log.logBasic( BaseMessages.getString( PKG, "PurRepositoryConnector.SessionService.Start" ) );
             }
+
             CredentialsProvider provider = new BasicCredentialsProvider();
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials( username, password );
             provider.setCredentials( AuthScope.ANY, credentials );
@@ -259,6 +263,7 @@ public class PurRepositoryConnector implements IRepositoryConnector {
             }
             return null;
           }
+
         }
       } );
 
