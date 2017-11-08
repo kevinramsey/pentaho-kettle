@@ -29,6 +29,8 @@ import org.pentaho.di.repository.ObjectId;
 import org.pentaho.di.repository.RepositoryDirectoryInterface;
 import org.pentaho.di.repository.RepositoryElementInterface;
 
+import javax.ws.rs.HEAD;
+
 public interface EngineMetaInterface extends RepositoryElementInterface {
 
   /**
@@ -190,7 +192,9 @@ public interface EngineMetaInterface extends RepositoryElementInterface {
   /**
    * Sets the internal kettle variables.
    */
+
   void setInternalKettleVariables();
+
 
   /**
    * Set versioning enabled
@@ -198,7 +202,9 @@ public interface EngineMetaInterface extends RepositoryElementInterface {
    * @param versioningEnabled
    *          is versioning enabled
    */
+
   default void setVersioningEnabled( Boolean versioningEnabled ) {
+
     // Default implementation does nothing
   }
 
@@ -207,7 +213,9 @@ public interface EngineMetaInterface extends RepositoryElementInterface {
    *
    * @return is versioning enabled
    */
+
   default Boolean getVersioningEnabled() {
+
     return null;
   }
 

@@ -2076,6 +2076,7 @@ public abstract class AbstractMeta implements ChangedFlagInterface, UndoInterfac
     return this.versioningEnabled;
   }
 
+
   private static class RunOptions {
     boolean clearingLog;
     boolean safeModeEnabled;
@@ -2101,4 +2102,5 @@ public abstract class AbstractMeta implements ChangedFlagInterface, UndoInterfac
   public void setSafeModeEnabled( boolean safeModeEnabled ) {
     this.runOptions.safeModeEnabled = safeModeEnabled;
   }
+
 }

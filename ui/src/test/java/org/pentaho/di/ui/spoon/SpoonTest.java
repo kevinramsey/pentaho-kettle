@@ -31,6 +31,7 @@ import java.util.Collections;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+import org.hamcrest.core.Every;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -56,7 +57,9 @@ import org.pentaho.di.repository.ObjectId;
 import org.pentaho.di.repository.ObjectRevision;
 import org.pentaho.di.repository.RepositoryDirectory;
 import org.pentaho.di.repository.RepositoryDirectoryInterface;
+
 import org.pentaho.di.repository.RepositoryObject;
+
 import org.pentaho.di.repository.RepositoryObjectType;
 import org.pentaho.di.repository.RepositorySecurityProvider;
 import org.pentaho.di.repository.Repository;
@@ -1004,6 +1007,7 @@ public class SpoonTest {
     Assert.assertTrue( result );
   }
 
+
   @Test
   public void textGetFileType() {
 
@@ -1023,4 +1027,5 @@ public class SpoonTest {
     assertEquals( "Job", Spoon.getFileType( "foe.kjb" ) );
     assertEquals( "Job", Spoon.getFileType( ".kjb" ) );
   }
+
 }
