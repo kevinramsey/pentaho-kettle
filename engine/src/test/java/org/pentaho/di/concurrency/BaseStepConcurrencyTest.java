@@ -23,7 +23,10 @@
 package org.pentaho.di.concurrency;
 
 import org.junit.Test;
+
 import org.pentaho.di.core.RowSet;
+import org.pentaho.di.trans.step.BaseStep;
+
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
@@ -65,6 +68,7 @@ public class BaseStepConcurrencyTest {
 
         AtomicBoolean condition = new AtomicBoolean( true );
 
+
         List<RowListenersModifier> rowListenersModifiers = new ArrayList<>();
         for ( int i = 0; i < modifiersAmount; i++ ) {
             rowListenersModifiers.add( new RowListenersModifier( condition ) );
@@ -76,10 +80,12 @@ public class BaseStepConcurrencyTest {
 
         ConcurrencyTestRunner<?, ?> runner =
                 new ConcurrencyTestRunner<Object, Object>(rowListenersModifiers, rowListenersTraversers, condition );
+
         runner.runConcurrentTest();
 
         runner.checkNoExceptionRaised();
     }
+
 
     /**
      * Row sets collection modifiers are exposed out of BaseStep class,
@@ -150,18 +156,23 @@ public class BaseStepConcurrencyTest {
 
     private class RowListenersModifier extends StopOnErrorCallable<BaseStep> {
         RowListenersModifier( AtomicBoolean condition ) {
+
             super( condition );
         }
 
         @Override
+
         BaseStep doCall() {
+
             baseStep.addRowListener( mock( RowListener.class ) );
             return null;
         }
     }
 
+
     private class RowListenersTraverser extends StopOnErrorCallable<BaseStep> {
         RowListenersTraverser( AtomicBoolean condition ) {
+
             super( condition );
         }
 
