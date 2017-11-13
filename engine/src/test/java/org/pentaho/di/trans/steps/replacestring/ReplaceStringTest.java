@@ -34,6 +34,7 @@ import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.value.ValueMetaString;
 import org.pentaho.di.trans.steps.mock.StepMockHelper;
 
+import javax.ws.rs.HEAD;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -157,7 +158,9 @@ public class ReplaceStringTest {
   @Test
   public void testBuildPatternWithLiteralParsingAndWholeWord() throws Exception {
 
+
     Pattern actualPattern = ReplaceString.buildPattern( true, true, true, LITERAL_STRING, false );
+
 
     Matcher matcher = actualPattern.matcher( INPUT_STRING );
     String actualString = matcher.replaceAll( "are" );
@@ -167,12 +170,16 @@ public class ReplaceStringTest {
   @Test
   public void testBuildPatternWithNonLiteralParsingAndWholeWord() throws Exception {
 
+
     Pattern actualPattern = ReplaceString.buildPattern( false, true, true, LITERAL_STRING, false );
+
 
     Matcher matcher = actualPattern.matcher( INPUT_STRING );
     String actualString = matcher.replaceAll( "are" );
     Assert.assertEquals( "This are String This Is String THIS IS STRING", actualString );
   }
+
+
 
 
   @Test
@@ -217,6 +224,8 @@ public class ReplaceStringTest {
     System.out.println( replaceString.getRow()[1] );
     assertTrue( "Expected: aAmatchedmatched","aAmatchedmatched".equals( replaceString.getRow()[1] ) );
   }
+
+
 
 }
 

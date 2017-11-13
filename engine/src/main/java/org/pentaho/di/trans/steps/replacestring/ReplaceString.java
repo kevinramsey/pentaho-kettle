@@ -82,9 +82,11 @@ public class ReplaceString extends BaseStep implements StepInterface {
 
 
 
+
   @VisibleForTesting
   static Pattern buildPattern( boolean literalParsing, boolean caseSensitive, boolean wholeWord,
     String patternString, boolean isUnicode ) {
+
 
     int flags = 0;
     if ( literalParsing && !wholeWord ) {

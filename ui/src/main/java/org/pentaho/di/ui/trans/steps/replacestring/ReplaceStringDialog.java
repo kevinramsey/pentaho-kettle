@@ -187,7 +187,9 @@ public class ReplaceStringDialog extends BaseStepDialog implements StepDialogInt
         ColumnInfo.COLUMN_TYPE_CCOMBO, ReplaceStringMeta.caseSensitiveDesc );
     ciKey[9] =
       new ColumnInfo(
+
         BaseMessages.getString( PKG, "ReplaceStringDialog.ColumnInfo.IsUnicode" ),
+
         ColumnInfo.COLUMN_TYPE_CCOMBO, ReplaceStringMeta.isUnicodeDesc );
 
     ciKey[1].setToolTip( BaseMessages.getString( PKG, "ReplaceStringDialog.ColumnInfo.OutStreamField.Tooltip" ) );
