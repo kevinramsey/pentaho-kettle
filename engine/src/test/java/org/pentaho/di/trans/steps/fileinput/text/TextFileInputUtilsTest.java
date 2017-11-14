@@ -29,6 +29,8 @@ import org.pentaho.di.core.logging.LogChannelInterface;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.trans.steps.file.BaseFileField;
 
+import javax.xml.stream.events.Characters;
+
 public class TextFileInputUtilsTest {
   @Test
   public void guessStringsFromLine() throws Exception {
@@ -64,6 +66,7 @@ public class TextFileInputUtilsTest {
     Assert.assertEquals( "fieldB\\", strings[ 1 ] );
     Assert.assertEquals( "fie\\ldC", strings[ 2 ] );
   }
+
 
   @Test
   public void convertCSVLinesToStrings() throws Exception {
@@ -155,5 +158,6 @@ public class TextFileInputUtilsTest {
     Assert.assertEquals( "A\\B", strings[ 0 ] );
     Assert.assertEquals( "C", strings[ 1 ] );
   }
+
 
 }
