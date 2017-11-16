@@ -905,6 +905,7 @@ public class JobEntryTrans extends JobEntryBase implements Cloneable, JobEntryIn
             ExtensionPointHandler.callExtensionPoint( log, KettleExtensionPoint.SpoonTransBeforeStart.id, new Object[] {
               executionConfiguration, parentJob.getJobMeta(), transMeta, rep
             } );
+
             List<Object> items = Arrays.asList( runConfiguration, false );
             try {
               ExtensionPointHandler.callExtensionPoint( log, KettleExtensionPoint
@@ -919,6 +920,7 @@ public class JobEntryTrans extends JobEntryBase implements Cloneable, JobEntryIn
               // Ignored
             }
             if ( !executionConfiguration.isExecutingLocally() && !executionConfiguration.isExecutingRemotely() && !executionConfiguration.isExecutingClustered() ) {
+
               result.setResult( true );
               return result;
             }
