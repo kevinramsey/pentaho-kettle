@@ -41,6 +41,7 @@ import org.pentaho.di.core.plugins.PluginInterface;
 import org.pentaho.di.core.plugins.PluginRegistry;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.imp.Import;
+import org.pentaho.di.job.Job;
 import org.pentaho.di.repository.ObjectId;
 import org.pentaho.di.repository.RepositoryDirectory;
 import org.pentaho.di.repository.RepositoryDirectoryInterface;
@@ -51,6 +52,7 @@ import org.pentaho.di.repository.RepositoryTestLazySupport;
 import org.pentaho.di.repository.StringObjectId;
 import org.pentaho.di.repository.pur.model.EERepositoryObject;
 import org.pentaho.di.trans.HasDatabasesInterface;
+import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.ui.repository.pur.services.ILockService;
 import org.pentaho.platform.api.repository2.unified.IRepositoryFileData;
@@ -498,6 +500,7 @@ public class PurRepositoryUnitTest extends RepositoryTestLazySupport {
       false, false );
   }
 
+
   @Test
   public void testGetJobPathWithoutExtension() {
     PurRepository pur = new PurRepository();
@@ -612,5 +615,6 @@ public class PurRepositoryUnitTest extends RepositoryTestLazySupport {
 
     assertEquals( "/admin1", repository.createRepositoryDirectory( treeMocked, newDirectory ).getPath() );
   }
+
 
 }

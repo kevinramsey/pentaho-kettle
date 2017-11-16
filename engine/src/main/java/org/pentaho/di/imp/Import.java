@@ -47,6 +47,7 @@ import org.pentaho.di.core.row.value.ValueMetaString;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.imp.rule.ImportRuleInterface;
+import org.pentaho.di.job.Job;
 import org.pentaho.di.job.JobMeta;
 import org.pentaho.di.pan.CommandLineOption;
 import org.pentaho.di.repository.CanLimitDirs;
@@ -56,6 +57,7 @@ import org.pentaho.di.repository.Repository;
 import org.pentaho.di.repository.RepositoryDirectoryInterface;
 import org.pentaho.di.repository.RepositoryImportFeedbackInterface;
 import org.pentaho.di.repository.RepositoryMeta;
+import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.version.BuildVersion;
 import org.w3c.dom.Document;
@@ -66,8 +68,10 @@ public class Import {
 
   public static final String STRING_IMPORT = "Import";
   public static final String ROOT_DIRECTORY = "/";
+
   public static final String PUBLIC_DIRECTORY = "public";
   public static final String HOME_DIRECTORY = "home";
+
 
   private static class ImportFeedback implements RepositoryImportFeedbackInterface, HasOverwritePrompter {
     private final LogChannelInterface log;
@@ -352,6 +356,8 @@ public class Import {
     SimpleDateFormat df = new SimpleDateFormat( "yyyy/MM/dd HH:mm:ss.SSS" );
     start = new Date(  );
     int returnCode = 0;
+
+
     try {
       RepositoryDirectoryInterface tree = repository.loadRepositoryDirectoryTree();
 
