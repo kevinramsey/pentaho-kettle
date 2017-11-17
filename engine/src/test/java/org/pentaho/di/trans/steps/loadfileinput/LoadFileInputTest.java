@@ -22,6 +22,8 @@
 
 package org.pentaho.di.trans.steps.loadfileinput;
 
+import org.junit.ClassRule;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -299,10 +301,12 @@ public class LoadFileInputTest {
 
     assertNotNull( stepLoadFileInput.getOneRow() );
     assertEquals( "input1 - not empty", new String( stepLoadFileInput.data.filecontent ) );
+
   }
 
   @Test
   public void testUTF8Encoding() throws KettleException, FileSystemException {
+
     stepMetaInterface.setIncludeFilename( true );
     stepMetaInterface.setFilenameField( "filename" );
     stepMetaInterface.setIncludeRowNumber( true );
@@ -316,16 +320,19 @@ public class LoadFileInputTest {
     stepMetaInterface.setRootUriField( "root uri" );
 
     // string with UTF-8 encoding
+
     ( (LoadFileInputMeta) runtimeSMI ).setEncoding( "UTF-8" );
     stepInputFiles.addFile( getFile( "UTF-8.txt" ) );
     Object[] result = stepLoadFileInput.getOneRow();
     assertEquals( " UTF-8 string ÕÕÕ€ ", result[0] );
     assertEquals( 1L, result[2] );
+
     assertEquals( "UTF-8.txt", result[3] );
     assertEquals( "txt", result[4] );
     assertEquals( false, result[6] );
     assertEquals( getFile( "UTF-8.txt" ).getURL().toString(), result[8] );
     assertEquals( getFile( "UTF-8.txt" ).getName().getRootURI(), result[9] );
+
   }
 
   @Test
@@ -376,6 +383,7 @@ public class LoadFileInputTest {
     stepLoadFileInput.data.convertRowMeta = mockedRowMetaInterface;
     Mockito.doReturn( new ValueMetaString() ).when( mockedRowMetaInterface ).getValueMeta( anyInt() );
 
+
     // byte array
     Mockito.doReturn( new ValueMetaBinary() ).when( mockedRowMetaInterface ).getValueMeta( anyInt() );
     ( (LoadFileInputMeta) runtimeSMI ).setEncoding( "UTF-8" );
@@ -387,6 +395,7 @@ public class LoadFileInputTest {
     assertNotNull( stepLoadFileInput.getOneRow() );
     assertArrayEquals( IOUtils.toByteArray( getFile( "pentaho_splash.png" ).getContent().getInputStream() ), stepLoadFileInput.data.filecontent );
   }
+
 
   @Test
   public void testCopyOrCloneArrayFromLoadFileWithSmallerSizedReadRowArray() {
@@ -423,5 +432,6 @@ public class LoadFileInputTest {
 
     assertEquals( 5,  loadFileInput.copyOrCloneArrayFromLoadFile( rowData, readrow ).length );
   }
+
 
 }
