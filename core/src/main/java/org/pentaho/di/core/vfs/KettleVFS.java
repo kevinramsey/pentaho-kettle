@@ -32,6 +32,7 @@ import org.apache.commons.vfs2.cache.WeakRefFilesCache;
 import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
 import org.apache.commons.vfs2.impl.StandardFileSystemManager;
 import org.apache.commons.vfs2.provider.local.LocalFile;
+import org.apache.http.protocol.HTTP;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.exception.KettleFileException;
 import org.pentaho.di.core.util.UUIDUtil;
@@ -503,6 +504,7 @@ public class KettleVFS {
     }
   }
 
+
   public void reset() {
     defaultVariableSpace = new Variables();
     defaultVariableSpace.initializeVariablesFrom( null );
@@ -521,6 +523,7 @@ public class KettleVFS {
   public static void freeUnusedResources() {
     ( (StandardFileSystemManager) getInstance().getFileSystemManager() ).freeUnusedResources();
   }
+
 
   public enum Suffix {
     ZIP( ".zip" ), TMP( ".tmp" ), JAR( ".jar" );
