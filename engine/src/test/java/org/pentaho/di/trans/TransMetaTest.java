@@ -57,9 +57,14 @@ import org.pentaho.di.trans.step.StepMetaChangeListenerInterface;
 import org.pentaho.di.trans.step.StepMetaInterface;
 import org.pentaho.di.trans.step.StepPartitioningMeta;
 import org.pentaho.di.trans.steps.datagrid.DataGridMeta;
+<<<<<<< HEAD
 import org.pentaho.di.trans.steps.dummytrans.DummyTransMeta;
 import org.pentaho.di.trans.steps.textfileoutput.TextFileOutputMeta;
 import org.pentaho.di.trans.steps.userdefinedjavaclass.InfoStepDefinition;
+=======
+import org.pentaho.di.trans.steps.textfileoutput.TextFileOutputMeta;
+import org.pentaho.di.trans.steps.userdefinedjavaclass.StepDefinition;
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
 import org.pentaho.di.trans.steps.userdefinedjavaclass.UserDefinedJavaClassDef;
 import org.pentaho.di.trans.steps.userdefinedjavaclass.UserDefinedJavaClassMeta;
 import org.pentaho.metastore.api.IMetaStore;
@@ -68,6 +73,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -505,8 +511,12 @@ public class TransMetaTest {
       Mockito.mock( OverwritePrompter.class ) );
     meta.setInternalKettleVariables( null );
 
+<<<<<<< HEAD
     assertEquals( repDirectory.getPath(),
       meta.getVariable( Const.INTERNAL_VARIABLE_TRANSFORMATION_REPOSITORY_DIRECTORY ) );
+=======
+    assertEquals( repDirectory.getPath(), meta.getVariable( Const.INTERNAL_VARIABLE_TRANSFORMATION_REPOSITORY_DIRECTORY ) );
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
   }
 
   @Test
@@ -824,5 +834,46 @@ public class TransMetaTest {
     StepMeta stepMeta = mock( StepMeta.class );
     when( stepMeta.getName() ).thenReturn( name );
     return stepMeta;
+  }
+
+  @Test
+  public void testGetPrevStepFields() throws KettleStepException {
+    DataGridMeta dgm = new DataGridMeta();
+    dgm.allocate( 2 );
+    dgm.setFieldName( new String[]{ "id" } );
+    dgm.setFieldType( new String[]{ ValueMetaFactory.getValueMetaName( ValueMetaInterface.TYPE_INTEGER ) } );
+    List<List<String>> dgm1Data = new ArrayList<>();
+    dgm1Data.add( Collections.singletonList( "1" ) );
+    dgm1Data.add( Collections.singletonList( "2" ) );
+    dgm.setDataLines( dgm1Data );
+
+    StepMeta dg = new StepMeta( "input1", dgm );
+    TextFileOutputMeta textFileOutputMeta = new TextFileOutputMeta();
+    StepMeta textFileOutputStep = new StepMeta( "BACKLOG-21039", textFileOutputMeta );
+
+    TransHopMeta hop = new TransHopMeta( dg, textFileOutputStep, true );
+    transMeta.addStep( dg );
+    transMeta.addStep( textFileOutputStep );
+    transMeta.addTransHop( hop );
+
+    RowMetaInterface row = transMeta.getPrevStepFields( textFileOutputStep );
+    assertNotNull( row );
+    assertEquals( 1, row.size() );
+    assertEquals( "id", row.getValueMeta( 0 ).getName() );
+    assertEquals( ValueMetaInterface.TYPE_INTEGER, row.getValueMeta( 0 ).getType() );
+
+    dgm.setFieldName( new String[]{ "id", "name" } );
+    dgm.setFieldType( new String[]{
+      ValueMetaFactory.getValueMetaName( ValueMetaInterface.TYPE_INTEGER ),
+      ValueMetaFactory.getValueMetaName( ValueMetaInterface.TYPE_STRING ),
+    } );
+
+    row = transMeta.getPrevStepFields( textFileOutputStep );
+    assertNotNull( row );
+    assertEquals( 2, row.size() );
+    assertEquals( "id", row.getValueMeta( 0 ).getName() );
+    assertEquals( "name", row.getValueMeta( 1 ).getName() );
+    assertEquals( ValueMetaInterface.TYPE_INTEGER, row.getValueMeta( 0 ).getType() );
+    assertEquals( ValueMetaInterface.TYPE_STRING, row.getValueMeta( 1 ).getType() );
   }
 }

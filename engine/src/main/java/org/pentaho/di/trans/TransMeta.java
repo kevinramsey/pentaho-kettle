@@ -290,7 +290,11 @@ public class TransMeta extends AbstractMeta
   protected Map<String, Boolean> loopCache;
 
   /** The previous step cache */
+<<<<<<< HEAD
   protected Map<String, List<StepMeta>> previousStepCache;
+=======
+  protected Map<StepMeta, List<StepMeta>> previousStepCache;
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
 
   /** The log channel interface. */
   protected LogChannelInterface log;
@@ -1381,12 +1385,18 @@ public class TransMeta extends AbstractMeta
    * @return The list of the preceding steps
    */
   public List<StepMeta> findPreviousSteps( StepMeta stepMeta, boolean info ) {
+<<<<<<< HEAD
     if ( stepMeta == null ) {
       return new ArrayList<>();
     }
 
     String cacheKey = getStepMetaCacheKey( stepMeta, info );
     List<StepMeta> previousSteps = previousStepCache.get( cacheKey );
+=======
+    List<StepMeta> previousSteps;
+
+    previousSteps = previousStepCache.get( stepMeta );
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
     if ( previousSteps == null ) {
       previousSteps = new ArrayList<>();
       for ( TransHopMeta hi : hops ) {
@@ -1398,7 +1408,11 @@ public class TransMeta extends AbstractMeta
           }
         }
       }
+<<<<<<< HEAD
       previousStepCache.put( cacheKey, previousSteps );
+=======
+      previousStepCache.put( stepMeta, previousSteps );
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
     }
     return previousSteps;
   }
@@ -1551,7 +1565,12 @@ public class TransMeta extends AbstractMeta
    * @return An array containing the preceding steps.
    */
   public StepMeta[] getPrevSteps( StepMeta stepMeta ) {
+<<<<<<< HEAD
     List<StepMeta> prevSteps = previousStepCache.get( getStepMetaCacheKey( stepMeta, true ) );
+=======
+    List<StepMeta> prevSteps;
+    prevSteps = previousStepCache.get(  stepMeta );
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
     if ( prevSteps == null ) {
       prevSteps = new ArrayList<>();
       for ( int i = 0; i < nrTransHops(); i++ ) { // Look at all the hops;
@@ -1816,8 +1835,12 @@ public class TransMeta extends AbstractMeta
 
     // Resume the regular program...
 
+<<<<<<< HEAD
     List<StepMeta> prevSteps = findPreviousSteps( stepMeta, false );
 
+=======
+    List<StepMeta> prevSteps = findPreviousSteps( stepMeta );
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
     int nrPrevious = prevSteps.size();
 
     if ( log.isDebug() ) {
@@ -1918,12 +1941,15 @@ public class TransMeta extends AbstractMeta
 
 
   public RowMetaInterface getPrevStepFields( StepMeta stepMeta, ProgressMonitorListener monitor ) throws KettleStepException {
+<<<<<<< HEAD
     return getPrevStepFields( stepMeta, null, monitor );
   }
 
   public RowMetaInterface getPrevStepFields(
     StepMeta stepMeta, final String stepName, ProgressMonitorListener  monitor )
     throws KettleStepException {
+=======
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
     clearStepFieldsCachce();
     RowMetaInterface row = new RowMeta();
 
@@ -1939,9 +1965,12 @@ public class TransMeta extends AbstractMeta
     StepMeta prevStepMeta = null;
     for ( int i = 0; i < nrPrevSteps; i++ ) {
       prevStepMeta = prevSteps.get( i );
+<<<<<<< HEAD
       if  ( stepName != null && !stepName.equalsIgnoreCase( prevStepMeta.getName() ) ) {
         continue;
       }
+=======
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
 
       if ( monitor != null ) {
         monitor.subTask(
@@ -3747,6 +3776,7 @@ public class TransMeta extends AbstractMeta
    * @return true if a loop has been found, false if no loop is found.
    */
   public boolean hasLoop( StepMeta stepMeta ) {
+<<<<<<< HEAD
     clearLoopCache();
     return hasLoop( stepMeta, null );
   }
@@ -3769,6 +3799,9 @@ public class TransMeta extends AbstractMeta
 
   public boolean hasLoop( StepMeta stepMeta, StepMeta lookup ) {
     return hasLoop( stepMeta, lookup, new HashSet<StepMeta>() );
+=======
+    return hasLoop( stepMeta, null, true ) || hasLoop( stepMeta, null, false );
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
   }
 
   /**
@@ -3784,6 +3817,7 @@ public class TransMeta extends AbstractMeta
    *
    * @return true if a loop has been found, false if no loop is found.
    */
+<<<<<<< HEAD
   private boolean hasLoop( StepMeta stepMeta, StepMeta lookup, HashSet<StepMeta> checkedEntries ) {
     String cacheKey =
             stepMeta.getName() + " - " + ( lookup != null ? lookup.getName() : "" );
@@ -3792,6 +3826,34 @@ public class TransMeta extends AbstractMeta
 
     if ( hasLoop != null ) {
       return hasLoop;
+=======
+  private boolean hasLoop( StepMeta stepMeta, StepMeta lookup, boolean info ) {
+    String
+        cacheKey =
+        stepMeta.getName() + " - " + ( lookup != null ? lookup.getName() : "" ) + " - " + ( info ? "true" : "false" );
+    Boolean loop = loopCache.get( cacheKey );
+    if ( loop != null ) {
+      return loop.booleanValue();
+    }
+
+    boolean hasLoop = false;
+    List<StepMeta> prevSteps = findPreviousSteps( stepMeta, info );
+    int nr = prevSteps.size();
+    for ( int i = 0; i < nr && !hasLoop; i++ ) {
+      StepMeta prevStepMeta = prevSteps.get( i );
+      if ( prevStepMeta != null ) {
+        if ( prevStepMeta.equals( stepMeta ) ) {
+          hasLoop = true;
+          break; // no need to check more but caching this one below
+        } else if ( prevStepMeta.equals( lookup ) ) {
+          hasLoop = true;
+          break; // no need to check more but caching this one below
+        } else if ( hasLoop( prevStepMeta, lookup == null ? stepMeta : lookup, info ) ) {
+          hasLoop = true;
+          break; // no need to check more but caching this one below
+        }
+      }
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
     }
 
     hasLoop = false;
@@ -6044,8 +6106,12 @@ public class TransMeta extends AbstractMeta
     loopCache.clear();
   }
 
+<<<<<<< HEAD
   @VisibleForTesting
   void clearPreviousStepCache() {
+=======
+  private void clearPreviousStepCache() {
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
     previousStepCache.clear();
   }
 

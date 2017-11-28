@@ -22,13 +22,19 @@
 package org.pentaho.di.core.reflection;
 
 import org.junit.BeforeClass;
+<<<<<<< HEAD
 import org.junit.ClassRule;
+=======
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
 import org.junit.Test;
 import org.pentaho.di.core.Condition;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.plugins.PluginRegistry;
 import org.pentaho.di.core.plugins.StepPluginType;
+<<<<<<< HEAD
 import org.pentaho.di.junit.rules.RestorePDIEngineEnvironment;
+=======
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.dummytrans.DummyTransMeta;
 import org.pentaho.di.trans.steps.filterrows.FilterRowsMeta;
@@ -39,10 +45,16 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class StringSearcherTest {
+<<<<<<< HEAD
   @ClassRule public static RestorePDIEngineEnvironment env = new RestorePDIEngineEnvironment();
 
   @BeforeClass
   public static void setUpBeforeClass() throws org.pentaho.di.core.exception.KettleException {
+=======
+
+  @BeforeClass
+  public static void setUpBeforeClass() throws org.pentaho.di.core.exception.KettleException, NoSuchFieldException, IllegalAccessException {
+>>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
     KettleEnvironment.init();
   }
 
