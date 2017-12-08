@@ -38,11 +38,13 @@ import org.pentaho.di.core.row.value.ValueMetaInteger;
 import org.pentaho.di.core.row.value.ValueMetaString;
 import org.pentaho.di.core.row.value.ValueMetaTimestamp;
 import org.pentaho.di.core.xml.XMLHandler;
+
 import org.pentaho.di.junit.rules.RestorePDIEnvironment;
 import org.w3c.dom.Document;
 
 import java.io.InputStream;
 import java.util.*;
+
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

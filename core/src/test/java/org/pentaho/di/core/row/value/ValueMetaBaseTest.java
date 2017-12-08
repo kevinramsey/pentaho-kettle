@@ -55,7 +55,9 @@ import org.pentaho.di.core.plugins.PluginRegistry;
 import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.di.i18n.BaseMessages;
+
 import org.pentaho.di.junit.rules.RestorePDIEnvironment;
+
 import org.w3c.dom.Node;
 
 import java.io.ByteArrayInputStream;
@@ -87,6 +89,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertArrayEquals;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
@@ -95,6 +98,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
 
 public class ValueMetaBaseTest {
   @ClassRule public static RestorePDIEnvironment env = new RestorePDIEnvironment();
@@ -941,6 +945,7 @@ public class ValueMetaBaseTest {
     valueMetaBase.getValue( XMLHandler.loadXMLString( "<value-data>not empty</value-data>" ).getFirstChild() );
   }
 
+
   @Test
   public void testConvertStringToTimestampType() throws KettleValueException {
     String timestampStringRepresentation = "2018/04/11 16:45:15.000000000";
@@ -1111,4 +1116,5 @@ public class ValueMetaBaseTest {
     valueMetaString.type = ValueMetaInterface.TYPE_NONE;
     assertEquals( valueMetaString.hashCode( "any" ),  0 );
   }
+
 }
