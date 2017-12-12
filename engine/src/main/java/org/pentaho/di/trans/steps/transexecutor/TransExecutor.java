@@ -285,11 +285,13 @@ public class TransExecutor extends BaseStep implements StepInterface {
   }
 
   @VisibleForTesting
+
   void passParametersToTrans( List<String> incomingFieldValues ) throws KettleException {
     //The values of the incoming fields from the previous step.
     if ( incomingFieldValues == null ) {
       incomingFieldValues = new ArrayList<String>();
     }
+
 
     // Set parameters, when fields are used take the first row in the set.
     TransExecutorParameters parameters = meta.getParameters();
@@ -305,6 +307,7 @@ public class TransExecutor extends BaseStep implements StepInterface {
     if ( parameters.getField() != null ) {
       fieldsToUse = Arrays.asList( parameters.getField() );
     }
+
 
     //The names of the incoming fields from the previous step.
     List<String> incomingFields = new ArrayList<String>();
@@ -344,6 +347,7 @@ public class TransExecutor extends BaseStep implements StepInterface {
     Trans trans = getExecutorTrans();
     StepWithMappingMeta
         .activateParams( trans, trans, this, trans.listParameters(), parameters.getVariable(), inputFieldValues );
+
   }
 
   @VisibleForTesting

@@ -22,17 +22,21 @@
 
 package org.pentaho.di.trans;
 
+
 import static org.pentaho.di.core.Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY;
 import static org.pentaho.di.core.Const.INTERNAL_VARIABLE_JOB_FILENAME_DIRECTORY;
 import static org.pentaho.di.core.Const.INTERNAL_VARIABLE_TRANSFORMATION_FILENAME_DIRECTORY;
 import static org.pentaho.di.core.Const.INTERNAL_VARIABLE_JOB_FILENAME_NAME;
+
 
 import org.apache.commons.lang.ArrayUtils;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.ObjectLocationSpecificationMethod;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.logging.LogChannel;
+
 import org.pentaho.di.core.parameters.DuplicateParamException;
+
 import org.pentaho.di.core.parameters.NamedParams;
 import org.pentaho.di.core.parameters.UnknownParamException;
 import org.pentaho.di.core.util.CurrentDirectoryResolver;
@@ -56,8 +60,11 @@ import org.pentaho.di.trans.steps.mapping.MappingIODefinition;
 import org.pentaho.di.trans.steps.simplemapping.SimpleMapping;
 import org.pentaho.metastore.api.IMetaStore;
 
+
 import javax.ws.rs.HEAD;
+
 import java.util.Map;
+import java.util.Set;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -114,10 +121,12 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
     TransMeta mappingTransMeta = null;
 
     CurrentDirectoryResolver r = new CurrentDirectoryResolver();
+
     // send restricted parentVariables with several important options
     // Otherwise we destroy child variables and the option "Inherit all variables from the transformation" is enabled always.
     VariableSpace tmpSpace = r.resolveCurrentDirectory( executorMeta.getSpecificationMethod(), getVarSpaceOnlyWithRequiredParentVars( space ),
         rep, executorMeta.getParentStepMeta(), executorMeta.getFileName() );
+
 
     switch ( executorMeta.getSpecificationMethod() ) {
       case FILENAME:
@@ -231,6 +240,7 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
 
   public static void activateParams( VariableSpace childVariableSpace, NamedParams childNamedParams, VariableSpace parent, String[] listParameters,
                                      String[] mappingVariables, String[] inputFields ) {
+
     activateParams(  childVariableSpace,  childNamedParams,  parent, listParameters, mappingVariables,  inputFields, true );
   }
 
@@ -247,6 +257,7 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
           parent.setVariable( mappingVariables[ i ], parent.environmentSubstitute( inputFields[ i ] ) );
         }
       }
+
     }
 
     for ( String variableName : parent.listVariables() ) {
@@ -254,9 +265,11 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
       // parent parameter.
       if ( parameters.containsKey( variableName ) ) {
         parameters.put( variableName, parent.getVariable( variableName ) );
+
         // added  isPassingAllParameters check since we don't need to overwrite the child value if the
         // isPassingAllParameters is not checked
       } else if ( ArrayUtils.contains( listParameters, variableName ) && isPassingAllParameters ) {
+
         // there is a definition only in Transformation properties - params tab
         parameters.put( variableName, parent.getVariable( variableName ) );
       }
@@ -272,6 +285,7 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
           // this is explicitly checked for up front
         }
       } else {
+
         try {
           childNamedParams.addParameterDefinition( key, "", "" );
           childNamedParams.setParameterValue( key, value );
@@ -281,12 +295,15 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
           // this is explicitly checked for up front
         }
 
+
         childVariableSpace.setVariable( key, value );
       }
     }
 
     childNamedParams.activateParameters();
   }
+
+
 
 
   /**
@@ -432,6 +449,7 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
   }
 
 
+
   public static  void addMissingVariables( VariableSpace fromSpace, VariableSpace toSpace ) {
     if ( toSpace == null ) {
       return;
@@ -440,11 +458,14 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
     for ( String variable : variableNames ) {
       if ( fromSpace.getVariable( variable ) == null ) {
         fromSpace.setVariable( variable, toSpace.getVariable( variable ) );
+
       }
     }
   }
 
+
   public static void replaceVariableValues( VariableSpace childTransMeta, VariableSpace replaceBy ) {
+
     if ( replaceBy == null ) {
       return;
     }
@@ -455,6 +476,7 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
       }
     }
   }
+
 
   /**
    * @return the inputMappings
@@ -469,5 +491,6 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
   public List<MappingIODefinition> getOutputMappings() {
     return Collections.emptyList();
   }
+
 
 }

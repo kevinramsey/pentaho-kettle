@@ -24,12 +24,15 @@ package org.pentaho.di.trans.steps.transexecutor;
 
 import java.util.Arrays;
 import org.junit.After;
+
 import org.junit.AfterClass;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runners.Suite;
 import org.mockito.Mockito;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.QueueRowSet;
@@ -52,6 +55,8 @@ import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.StepMockUtil;
+
+import javax.ws.rs.HEAD;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -422,7 +427,9 @@ public class TransExecutorUnitTest {
     executor.init( meta, data );
 
     executor.setVariable( paramOverwrite, parentValue );
+
     executor.setVariable( childParam, childValue );
+
 
     Mockito.when( executor.getLogLevel() ).thenReturn( LogLevel.NOTHING );
     parent.setLog( new LogChannel( this ) );
@@ -432,7 +439,9 @@ public class TransExecutorUnitTest {
 
     Trans internalTrans = executor.createInternalTrans();
     executor.getData().setExecutorTrans( internalTrans );
+
     executor.passParametersToTrans( Arrays.asList( meta.getParameters().getInput() ) );
+
 
     //When the child parameter does exist in the parent parameters, overwrite the child parameter by the parent parameter.
     Assert.assertEquals( parentValue, internalTrans.getVariable( paramOverwrite ) );
@@ -440,6 +449,7 @@ public class TransExecutorUnitTest {
     //All other parent parameters need to get copied into the child parameters  (when the 'Inherit all variables from the transformation?' option is checked)
     Assert.assertEquals( childValue, internalTrans.getVariable( childParam ) );
   }
+
 
   @Test
   public void testSafeStop() throws Exception {
@@ -471,4 +481,5 @@ public class TransExecutorUnitTest {
     verify( executor.getTrans(), never() ).safeStop();
     verify( executor.getTrans() ).stopAll();
   }
+
 }
