@@ -78,7 +78,9 @@ import java.util.Map.Entry;
 @InjectionSupported( localizationPrefix = "MetaInject.Injection.", groups = { "SOURCE_OUTPUT_FIELDS",
   "MAPPING_FIELDS" } )
 public class MetaInjectMeta extends BaseStepMeta implements StepMetaInterface, StepMetaChangeListenerInterface,
+
   HasRepositoryDirectories, ISubTransAwareMeta {
+
 
   private static Class<?> PKG = MetaInjectMeta.class; // for i18n purposes, needed by Translator2!!
 

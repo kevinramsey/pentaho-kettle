@@ -41,6 +41,8 @@ import org.pentaho.di.core.util.serialization.BaseSerializingMeta;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.core.variables.Variables;
 import org.pentaho.di.i18n.BaseMessages;
+import org.pentaho.di.job.entries.job.JobEntryJob;
+import org.pentaho.di.job.entries.trans.JobEntryTrans;
 import org.pentaho.di.repository.HasRepositoryDirectories;
 import org.pentaho.di.repository.ObjectId;
 import org.pentaho.di.repository.Repository;
@@ -48,10 +50,10 @@ import org.pentaho.di.repository.RepositoryDirectory;
 import org.pentaho.di.repository.RepositoryDirectoryInterface;
 import org.pentaho.di.resource.ResourceDefinition;
 import org.pentaho.di.resource.ResourceNamingInterface;
-
+import org.pentaho.di.trans.step.BaseStepMeta;
 import org.pentaho.di.trans.step.StepMetaInterface;
 import org.pentaho.di.trans.steps.mapping.MappingIODefinition;
-
+import org.pentaho.di.trans.steps.simplemapping.SimpleMapping;
 import org.pentaho.metastore.api.IMetaStore;
 
 import javax.ws.rs.HEAD;
@@ -71,7 +73,9 @@ import java.util.Set;
  * @since 02-jan-2017
  * @author Yury Bakhmutski
  */
+
 public abstract class StepWithMappingMeta extends BaseSerializingMeta implements HasRepositoryDirectories, StepMetaInterface {
+
   //default value
   private static Class<?> PKG = StepWithMappingMeta.class;
 

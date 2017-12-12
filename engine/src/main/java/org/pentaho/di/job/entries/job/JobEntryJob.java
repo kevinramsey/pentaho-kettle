@@ -97,7 +97,9 @@ import java.util.UUID;
  * @since 01-10-2003, Rewritten on 18-06-2004
  *
  */
+
 public class JobEntryJob extends JobEntryBase implements Cloneable, JobEntryInterface, HasRepositoryDirectories, JobEntryRunConfigurableInterface {
+
   private static Class<?> PKG = JobEntryJob.class; // for i18n purposes, needed by Translator2!!
   public static final int IS_PENTAHO = 1;
 

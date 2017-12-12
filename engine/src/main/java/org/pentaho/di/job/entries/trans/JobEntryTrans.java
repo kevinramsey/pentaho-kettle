@@ -55,6 +55,7 @@ import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.job.DelegationListener;
 import org.pentaho.di.job.Job;
 import org.pentaho.di.job.JobMeta;
+import org.pentaho.di.job.entries.job.JobEntryJob;
 import org.pentaho.di.job.entry.JobEntryBase;
 import org.pentaho.di.job.entry.JobEntryInterface;
 import org.pentaho.di.job.entry.JobEntryRunConfigurableInterface;
@@ -81,6 +82,7 @@ import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.trans.TransSupplier;
 import org.pentaho.di.trans.cluster.TransSplitter;
 import org.pentaho.di.trans.step.StepMeta;
+import org.pentaho.di.trans.steps.simplemapping.SimpleMapping;
 import org.pentaho.di.www.SlaveServerTransStatus;
 import org.pentaho.metastore.api.IMetaStore;
 import org.pentaho.platform.api.repository2.unified.RepositoryFile;
@@ -100,7 +102,9 @@ import java.util.Map;
  * @author Matt Casters
  * @since 1-Oct-2003, rewritten on 18-June-2004
  */
+
 public class JobEntryTrans extends JobEntryBase implements Cloneable, JobEntryInterface, HasRepositoryDirectories, JobEntryRunConfigurableInterface {
+
   private static Class<?> PKG = JobEntryTrans.class; // for i18n purposes, needed by Translator2!!
   public static final int IS_PENTAHO = 1;
 
