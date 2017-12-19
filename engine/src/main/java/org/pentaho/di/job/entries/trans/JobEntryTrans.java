@@ -86,6 +86,7 @@ import org.pentaho.metastore.api.IMetaStore;
 import org.pentaho.platform.api.repository2.unified.RepositoryFile;
 import org.w3c.dom.Node;
 
+import javax.ws.rs.HEAD;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -906,6 +907,7 @@ public class JobEntryTrans extends JobEntryBase implements Cloneable, JobEntryIn
               executionConfiguration, parentJob.getJobMeta(), transMeta, rep
             } );
 
+
             List<Object> items = Arrays.asList( runConfiguration, false );
             try {
               ExtensionPointHandler.callExtensionPoint( log, KettleExtensionPoint
@@ -920,6 +922,7 @@ public class JobEntryTrans extends JobEntryBase implements Cloneable, JobEntryIn
               // Ignored
             }
             if ( !executionConfiguration.isExecutingLocally() && !executionConfiguration.isExecutingRemotely() && !executionConfiguration.isExecutingClustered() ) {
+
 
               result.setResult( true );
               return result;
