@@ -123,6 +123,7 @@ public class MetaInjectTest {
 
   private TransMeta transMeta;
 
+
   private Trans trans;
 
   private StepMetaInjectionInterface metaInjectionInterface;
@@ -144,9 +145,11 @@ public class MetaInjectTest {
 
     TransMeta internalTransMeta = mock( TransMeta.class );
     StepMeta stepMeta = mock( StepMeta.class );
+
     trans = new Trans();
     trans.setLog( LogChannel.GENERAL );
     trans = PowerMockito.spy( trans );
+
     doReturn( trans ).when( metaInject ).getTrans();
     doReturn( INJECTOR_STEP_NAME ).when( stepMeta ).getName();
     doReturn( Collections.singletonList( stepMeta ) ).when( internalTransMeta ).getUsedSteps();
