@@ -49,6 +49,7 @@ import org.pentaho.di.trans.step.errorhandling.FileErrorHandler;
 import org.pentaho.di.trans.step.errorhandling.FileErrorHandlerContentLineNumber;
 import org.pentaho.di.trans.step.errorhandling.FileErrorHandlerMissingFiles;
 
+import javax.ws.rs.HEAD;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -183,14 +184,16 @@ public abstract class BaseFileInputStep<M extends BaseFileInputMeta<?, ?, ?>, D 
   }
 
   protected boolean handleOpenFileException( Exception e ) {
-    String errorMsg =
-      "Couldn't open file #" + data.currentFileIndex + " : " + data.file.getName().getFriendlyURI();
+    String errorMsg = "Couldn't open file #" + data.currentFileIndex + " : " + data.file.getName().getFriendlyURI();
+
     if ( !failAfterBadFile( errorMsg ) ) { // !meta.isSkipBadFiles()) stopAll();
       return true;
     }
     stopAll();
     setErrors( getErrors() + 1 );
+
     logError( errorMsg, e );
+
     return false;
   }
 

@@ -23,7 +23,9 @@
 package org.pentaho.di.trans.steps.fileinput.text;
 
 import org.apache.commons.io.IOUtils;
+
 import org.apache.commons.vfs2.FileContent;
+
 import org.apache.commons.vfs2.FileObject;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -41,7 +43,9 @@ import org.pentaho.di.core.row.value.ValueMetaString;
 import org.pentaho.di.core.util.Assert;
 import org.pentaho.di.core.variables.Variables;
 import org.pentaho.di.core.vfs.KettleVFS;
+
 import org.pentaho.di.junit.rules.RestorePDIEngineEnvironment;
+
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.trans.TransTestingUtil;
@@ -52,11 +56,14 @@ import org.pentaho.di.trans.step.errorhandling.FileErrorHandler;
 import org.pentaho.di.trans.steps.StepMockUtil;
 import org.pentaho.di.trans.steps.file.BaseFileField;
 import org.pentaho.di.trans.steps.file.IBaseFileInputReader;
+
 import org.pentaho.di.trans.steps.file.IBaseFileInputStepControl;
+
 import org.pentaho.di.utils.TestUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -69,6 +76,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
+
 
 public class TextFileInputTest {
   @ClassRule public static RestorePDIEngineEnvironment env = new RestorePDIEngineEnvironment();
@@ -262,6 +270,7 @@ public class TextFileInputTest {
     assertEquals( 0, textFileInput.getErrors() );
   }
 
+
   @Test
   public void test_PDI17117() throws Exception {
     final String virtualFile = createVirtualFile( "pdi-14832.txt", "1,\n" );
@@ -331,6 +340,7 @@ public class TextFileInputTest {
     // After closing the file, the buffer must be empty!
     assertEquals( 0, mockTFID.lineBuffer.size() );
   }
+
 
   private TextFileInputMeta createMetaObject( BaseFileField... fields ) {
     TextFileInputMeta meta = new TextFileInputMeta();
