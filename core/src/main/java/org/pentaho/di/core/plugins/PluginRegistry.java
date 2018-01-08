@@ -78,7 +78,7 @@ public class PluginRegistry {
   private static final List<PluginRegistryExtension> extensions = new ArrayList<>();
   private static final String SUPPLEMENTALS_SUFFIX = "-supplementals";
 
-<<<<<<< HEAD
+
   public static final LogChannelInterface log = new LogChannel( "PluginRegistry", true );
 
   // the list of plugins
@@ -96,24 +96,7 @@ public class PluginRegistry {
 
   private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-=======
-  // the list of plugins
-  private final Map<Class<? extends PluginTypeInterface>, List<PluginInterface>> pluginMap = new HashMap<>();
 
-  private final Map<String, URLClassLoader> folderBasedClassLoaderMap = new HashMap<>();
-
-  private final Map<Class<? extends PluginTypeInterface>, Map<PluginInterface, URLClassLoader>> classLoaderMap = new HashMap<>();
-
-  private final Map<String, URLClassLoader> classLoaderGroupsMap = new HashMap<>();
-
-  private final Map<Class<? extends PluginTypeInterface>, List<String>> categoryMap = new HashMap<>();
-
-  private final Map<PluginInterface, String[]> parentClassloaderPatternMap = new HashMap<>();
-
-  private final Map<Class<? extends PluginTypeInterface>, List<PluginTypeListener>> listeners = new HashMap<>();
-
-  private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
->>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
 
   /**
    * Initialize the registry, keep private to keep this a singleton

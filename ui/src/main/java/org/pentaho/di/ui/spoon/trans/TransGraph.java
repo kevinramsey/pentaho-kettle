@@ -189,6 +189,7 @@ import org.pentaho.ui.xul.impl.XulEventHandler;
 import org.pentaho.ui.xul.jface.tags.JfaceMenuitem;
 import org.pentaho.ui.xul.jface.tags.JfaceMenupopup;
 
+import javax.ws.rs.HEAD;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -983,11 +984,13 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
         TransHopMeta hop = findHop( real.x, real.y );
         if ( hop != null ) {
           TransHopMeta before = (TransHopMeta) hop.clone();
+
           setHopEnabled( hop, !hop.isEnabled() );
           if ( hop.isEnabled() && transMeta.hasLoop( hop.getToStep() ) ) {
             setHopEnabled( hop, false );
             modalMessageDialog( getString( "TransGraph.Dialog.HopCausesLoop.Title" ),
               getString( "TransGraph.Dialog.HopCausesLoop.Message" ), SWT.OK | SWT.ICON_ERROR );
+
           }
           TransHopMeta after = (TransHopMeta) hop.clone();
           spoon.addUndoChange( transMeta, new TransHopMeta[] { before }, new TransHopMeta[] { after },
@@ -2409,11 +2412,13 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
     selectionRegion = null;
     TransHopMeta hi = getCurrentHop();
     TransHopMeta before = (TransHopMeta) hi.clone();
+
     setHopEnabled( hi, !hi.isEnabled() );
     if ( hi.isEnabled() && transMeta.hasLoop( hi.getToStep() ) ) {
       setHopEnabled( hi, false );
       modalMessageDialog( getString( "TransGraph.Dialog.LoopAfterHopEnabled.Title" ),
         getString( "TransGraph.Dialog.LoopAfterHopEnabled.Message" ), SWT.OK | SWT.ICON_ERROR );
+
     } else {
       TransHopMeta after = (TransHopMeta) hi.clone();
       spoon.addUndoChange( transMeta, new TransHopMeta[] { before }, new TransHopMeta[] { after },
@@ -2466,14 +2471,18 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
           new int[] { transMeta.indexOfTransHop( hop ) } );
         if ( transMeta.hasLoop( hop.getToStep() ) ) {
           hasLoop = true;
+
           setHopEnabled( hop, false );
+
         }
       }
     }
 
     if ( enabled && hasLoop ) {
+
       modalMessageDialog( getString( "TransGraph.Dialog.HopCausesLoop.Title" ),
         getString( "TransGraph.Dialog.HopCausesLoop.Message" ), SWT.OK | SWT.ICON_ERROR );
+
     }
 
     spoon.refreshGraph();
@@ -2501,8 +2510,10 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
     Set<StepMeta> checkedEntries = enableDisableNextHops( currentHop.getToStep(), enabled, new HashSet<>() );
 
     if ( checkedEntries.stream().anyMatch( entry -> transMeta.hasLoop( entry ) ) ) {
+
       modalMessageDialog( getString( "TransGraph.Dialog.HopCausesLoop.Title" ),
         getString( "TransGraph.Dialog.HopCausesLoop.Message" ), SWT.OK | SWT.ICON_ERROR );
+
     }
 
     spoon.refreshGraph();
@@ -2525,6 +2536,7 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
           enableDisableNextHops( hop.getToStep(), enabled, checkedEntries );
         }
       } );
+
     return checkedEntries;
   }
 

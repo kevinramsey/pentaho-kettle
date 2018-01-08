@@ -253,12 +253,10 @@ public class RowMeta implements RowMetaInterface {
           newMeta = renameValueMetaIfInRow( meta, null );
         }
         valueMetaList.add( index, newMeta );
-<<<<<<< HEAD
+
         cache.storeMapping( newMeta.getName(), index );
         cache.updateFrom( index + 1, valueMetaList );
-=======
-        cache.invalidate();
->>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
+
         needRealClone = null;
       } finally {
         lock.writeLock().unlock();
@@ -814,16 +812,13 @@ public class RowMeta implements RowMetaInterface {
   public void removeValueMeta( int index ) {
     lock.writeLock().lock();
     try {
-<<<<<<< HEAD
+
       ValueMetaInterface old = valueMetaList.remove( index );
       if ( old != null ) {
         cache.removeMapping( old.getName() );
         cache.updateFrom( index, valueMetaList );
       }
-=======
-      valueMetaList.remove( index );
-      cache.invalidate();
->>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
+
       needRealClone = null;
     } finally {
       lock.writeLock().unlock();
@@ -1301,7 +1296,7 @@ public class RowMeta implements RowMetaInterface {
         return;
       }
       mapping.put( name.toLowerCase(), index );
-<<<<<<< HEAD
+
     }
 
     void replaceMapping( String old, String current, int index ) {
@@ -1318,13 +1313,7 @@ public class RowMeta implements RowMetaInterface {
     void updateFrom( int idx, List<ValueMetaInterface> metas ) {
       for ( int i = idx; i < metas.size(); i++  ) {
         storeMapping( metas.get( i ).getName(), i );
-=======
-    }
 
-    void replaceMapping( String old, String current, int index ) {
-      if ( !Utils.isEmpty( old ) ) {
-        mapping.remove( old.toLowerCase() );
->>>>>>> [SP-4000][PDI-16818] - Fix for run window taking ages to appear and test cases
       }
     }
 
