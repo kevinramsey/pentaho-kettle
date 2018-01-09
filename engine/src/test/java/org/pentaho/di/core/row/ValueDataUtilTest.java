@@ -762,9 +762,11 @@ public class ValueDataUtilTest {
         ValueMetaInterface.TYPE_BIGNUMBER, CalculatorMetaFunction.CALC_PERCENT_2 ) );
     assertEquals( BigDecimal.valueOf( Double.valueOf( "1.96" ) ), calculate( "2", "2",
         ValueMetaInterface.TYPE_BIGNUMBER, CalculatorMetaFunction.CALC_PERCENT_2 ) );
+
     assertEquals( new BigDecimal( "8.0" ), calculate( "10", "20",
         ValueMetaInterface.TYPE_BIGNUMBER, CalculatorMetaFunction.CALC_PERCENT_2 ) );
     assertEquals( new BigDecimal( "50.0" ), calculate( "100", "50",
+
         ValueMetaInterface.TYPE_BIGNUMBER, CalculatorMetaFunction.CALC_PERCENT_2 ) );
   }
 
