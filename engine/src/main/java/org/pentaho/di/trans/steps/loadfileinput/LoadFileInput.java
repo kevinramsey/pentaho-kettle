@@ -99,6 +99,8 @@ public class LoadFileInput extends BaseStep implements StepInterface {
 
           // Create convert meta-data objects that will contain Date & Number formatters
 
+
+
           // All non binary content is handled as a String. It would be converted to the target type after the processing.
           data.convertRowMeta = data.outputRowMeta.cloneToType( ValueMetaInterface.TYPE_STRING );
 
@@ -379,7 +381,9 @@ public class LoadFileInput extends BaseStep implements StepInterface {
             }
             if ( targetValueMeta.getType() != ValueMetaInterface.TYPE_BINARY ) {
 
+
               // handle as a String
+
 
               if (  meta.getEncoding() != null ) {
                 o = new String( data.filecontent, meta.getEncoding() );
@@ -388,7 +392,9 @@ public class LoadFileInput extends BaseStep implements StepInterface {
               }
             } else {
 
+
               // save as byte[] without any conversion
+
 
               o = data.filecontent;
             }
@@ -401,6 +407,8 @@ public class LoadFileInput extends BaseStep implements StepInterface {
         }
 
 
+
+
         if ( targetValueMeta.getType() == ValueMetaInterface.TYPE_BINARY ) {
           // save as byte[] without any conversion
           outputRowData[indexField] = o;
@@ -408,6 +416,8 @@ public class LoadFileInput extends BaseStep implements StepInterface {
           // convert string (processing type) to the target type
           outputRowData[indexField] = targetValueMeta.convertData( sourceValueMeta, o );
         }
+
+
 
 
         // Do we need to repeat this field if it is null?
@@ -489,8 +499,10 @@ public class LoadFileInput extends BaseStep implements StepInterface {
 
           // Create convert meta-data objects that will contain Date & Number formatters
 
+
           // All non binary content is handled as a String. It would be converted to the target type after the processing.
           data.convertRowMeta = data.outputRowMeta.cloneToType( ValueMetaInterface.TYPE_STRING );
+
 
         } catch ( Exception e ) {
           logError( "Error at step initialization: " + e.toString() );
