@@ -21,6 +21,8 @@
  ******************************************************************************/
 package org.pentaho.di.trans.steps.xmloutput;
 
+import org.pentaho.di.trans.steps.mock.StepMockHelper;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -55,9 +57,9 @@ import static org.mockito.Mockito.when;
 public class XMLOutputTest {
 
   private StepMockHelper<XMLOutputMeta, XMLOutputData> stepMockHelper;
-  private XMLOutput xmlOutput;
-  private XMLOutputMeta xmlOutputMeta;
-  private XMLOutputData xmlOutputData;
+  private XMLOutput                                    xmlOutput;
+  private XMLOutputMeta                                xmlOutputMeta;
+  private XMLOutputData                                xmlOutputData;
   private Trans trans = mock( Trans.class );
   private static final String[] ILLEGAL_CHARACTERS_IN_XML_ATTRIBUTES = { "<", ">", "&", "\'", "\"" };
 
@@ -106,6 +108,7 @@ public class XMLOutputTest {
     xmlOutput.dispose( xmlOutputMeta, xmlOutputData );
     verify( xmlOutputData.writer, times( rowWithData.length ) ).writeAttribute( any(), any() );
     verify( xmlOutput, atLeastOnce() ).closeOutputStream( any() );
+
   }
 
   @Test
@@ -131,6 +134,7 @@ public class XMLOutputTest {
     xmlOutput.dispose( xmlOutputMeta, xmlOutputData );
     verify( xmlOutputData.writer, times( writeNullInvocationExpected ) ).writeAttribute( any(), any() );
     verify( xmlOutput, atLeastOnce() ).closeOutputStream( any() );
+
   }
 
   private static Object[] initRowWithData( String[] dt ) {
