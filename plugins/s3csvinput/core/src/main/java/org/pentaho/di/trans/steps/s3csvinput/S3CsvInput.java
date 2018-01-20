@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.omg.CORBA.DynAnyPackage.Invalid;
 import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleFileException;
@@ -39,6 +40,8 @@ import org.pentaho.di.trans.step.StepDataInterface;
 import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaInterface;
+
+import javax.ws.rs.HEAD;
 
 /**
  * Read a simple CSV file
@@ -137,7 +140,9 @@ public class S3CsvInput extends BaseStep implements StepInterface {
       // We'll use the same algorithm...
       //
       for ( String filename : data.filenames ) {
+
         long size = new S3ObjectsProvider( data.s3Client ).getS3ObjectContentLenght( data.s3bucket, filename );
+
         data.fileSizes.add( size );
         data.totalFileSize += size;
       }
@@ -244,6 +249,7 @@ public class S3CsvInput extends BaseStep implements StepInterface {
       // If we are running in parallel we only want to grab a part of the content, not everything.
       //
       if ( data.parallel ) {
+
         data.s3ObjectInputStream = new S3ObjectsProvider( data.s3Client )
           .getS3Object( data.s3bucket, data.filenames[ data.filenr ], data.bytesToSkipInFirstFile,
             data.bytesToSkipInFirstFile + data.blockToRead + data.maxLineSize * 2 ).getObjectContent();
@@ -251,6 +257,7 @@ public class S3CsvInput extends BaseStep implements StepInterface {
         data.s3ObjectInputStream =
           new S3ObjectsProvider( data.s3Client ).getS3Object( data.s3bucket, data.filenames[ data.filenr ] )
             .getObjectContent();
+
       }
 
       if ( meta.isLazyConversionActive() ) {
@@ -543,8 +550,10 @@ public class S3CsvInput extends BaseStep implements StepInterface {
       try {
         //Get the specified bucket
         String bucketname = environmentSubstitute( meta.getBucket() );
+
         data.s3Client = meta.getS3Client( this );
         data.s3bucket = new S3ObjectsProvider( data.s3Client ).getBucket( bucketname );
+
         if ( data.s3bucket == null ) {
           logError( Messages.getString( "S3CsvInput.Log.UnableToFindBucket.Message", bucketname ) );
           return false;

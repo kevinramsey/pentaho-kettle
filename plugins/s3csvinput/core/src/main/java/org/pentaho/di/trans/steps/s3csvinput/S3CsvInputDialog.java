@@ -48,6 +48,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
+
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.exception.KettleStepException;
@@ -79,21 +81,21 @@ import org.pentaho.di.ui.trans.steps.textfileinput.TextFileCSVImportProgressDial
 public class S3CsvInputDialog extends BaseStepDialog implements StepDialogInterface {
   private S3CsvInputMeta inputMeta;
 
-  private TextVar      wBucket;
-  private Button       wbBucket; // browse for a bucket.
-  private TextVar      wFilename;
-  private CCombo       wFilenameField;
-  private Button       wbbFilename; // Browse for a file
-  private Button       wIncludeFilename;
-  private TextVar      wRowNumField;
-  private Button       wbDelimiter;
-  private TextVar      wDelimiter;
-  private TextVar      wEnclosure;
-  private TextVar      wMaxLineSize;
-  private Button       wLazyConversion;
-  private Button       wHeaderPresent;
+  private TextVar        wBucket;
+  private Button         wbBucket; // browse for a bucket.
+  private TextVar        wFilename;
+  private CCombo         wFilenameField;
+  private Button         wbbFilename; // Browse for a file
+  private Button         wIncludeFilename;
+  private TextVar        wRowNumField;
+  private Button         wbDelimiter;
+  private TextVar        wDelimiter;
+  private TextVar        wEnclosure;
+  private TextVar        wMaxLineSize;
+  private Button         wLazyConversion;
+  private Button         wHeaderPresent;
 
-  private TableView    wFields;
+  private TableView      wFields;
 
   private boolean isReceivingInput;
   private Button wRunningInParallel;
@@ -536,7 +538,9 @@ public class S3CsvInputDialog extends BaseStepDialog implements StepDialogInterf
         try {
           S3CsvInputMeta meta = new S3CsvInputMeta();
           getInfo( meta );
+
           S3ObjectsProvider s3ObjProvider = new S3ObjectsProvider( meta.getS3Client( transMeta ) );
+
 
           EnterSelectionDialog dialog = new EnterSelectionDialog( shell, s3ObjProvider.getBucketsNames(),
               Messages.getString( "S3CsvInputDialog.Exception.SelectBucket.Title" ),
@@ -564,7 +568,9 @@ public class S3CsvInputDialog extends BaseStepDialog implements StepDialogInterf
             S3CsvInputMeta meta = new S3CsvInputMeta();
             getInfo( meta );
 
+
             S3ObjectsProvider s3ObjProvider = new S3ObjectsProvider( meta.getS3Client( transMeta ) );
+
             String[] objectnames = s3ObjProvider.getS3ObjectsNames( meta.getBucket() );
 
             EnterSelectionDialog dialog = new EnterSelectionDialog( shell, objectnames,
@@ -734,8 +740,10 @@ public class S3CsvInputDialog extends BaseStepDialog implements StepDialogInterf
 
       wFields.table.removeAll();
 
+
       S3ObjectsProvider s3ObjProvider = new S3ObjectsProvider( meta.getS3Client( transMeta ) );
       Bucket s3bucket = s3ObjProvider.getBucket( bucketname );
+
 
       if ( s3bucket == null ) {
         throw new Exception( Messages.getString( "S3DefaultService.Exception.UnableToFindBucket.Message", bucketname ) );
@@ -754,8 +762,10 @@ public class S3CsvInputDialog extends BaseStepDialog implements StepDialogInterf
 
       // Only get the first lines, not the complete file
       // And grab an input stream to the data...
+
       inputStream =
         s3ObjProvider.getS3Object( s3bucket, filename, 0L, (long) samples * (long) maxLineSize ).getObjectContent();
+
 
       InputStreamReader reader = new InputStreamReader( inputStream );
 

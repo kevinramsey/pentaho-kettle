@@ -22,6 +22,10 @@
 
 package org.pentaho.di.trans.steps.s3csvinput;
 
+import com.amazonaws.services.s3.AmazonS3;
+import org.omg.CORBA.DynAnyPackage.Invalid;
+
+import java.util.Arrays;
 import java.util.List;
 
 import com.amazonaws.SdkClientException;
@@ -38,6 +42,8 @@ public class S3ObjectsProvider {
   public S3ObjectsProvider( AmazonS3 s3Client ) {
     super();
     this.s3Client = s3Client;
+
+    Invalid class name: org.jets3t.service.utils.RestUtils$ConnManagerFactory when connecting to Amazon S3 bucket in PDI 8.0 (8.0 Suite)
   }
 
   /**
@@ -58,6 +64,7 @@ public class S3ObjectsProvider {
     }
 
     return result;
+
   }
 
   /**
@@ -68,6 +75,7 @@ public class S3ObjectsProvider {
    */
   public String[] getBucketsNames() throws SdkClientException {
     return getBuckets().stream().map( b -> b.getName() ).toArray( String[]::new );
+
   }
 
   /**
@@ -80,6 +88,7 @@ public class S3ObjectsProvider {
    */
   public Bucket getBucket( String bucketName ) throws SdkClientException {
     return s3Client.doesBucketExistV2( bucketName ) ? new Bucket( bucketName ) : null;
+
   }
 
   /**
@@ -95,6 +104,7 @@ public class S3ObjectsProvider {
     try {
       Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
       return s3Client.listObjects( bucket.getName() );
+
     } finally {
       Thread.currentThread().setContextClassLoader( currentClassLoader );
     }
@@ -109,11 +119,13 @@ public class S3ObjectsProvider {
    * @throws Exception
    */
   public String[] getS3ObjectsNames( String bucketName ) throws Exception {
+
     Bucket bucket = getBucket( bucketName );
     if ( bucket == null ) {
       throw new Exception( Messages.getString( "S3DefaultService.Exception.UnableToFindBucket.Message", bucketName ) );
     }
     return getS3Objects( bucket ).getObjectSummaries().stream().map( b -> b.getKey() ).toArray( String[]::new );
+
   }
 
   /**
@@ -138,6 +150,7 @@ public class S3ObjectsProvider {
     } else {
       return s3Client.getObject( bucket.getName(), objectKey );
     }
+
   }
 
   /**
@@ -151,6 +164,7 @@ public class S3ObjectsProvider {
    * @throws SdkClientException
    */
   public S3Object getS3Object( Bucket bucket, String objectKey ) throws SdkClientException {
+
     return getS3Object( bucket, objectKey, null, null );
   }
 
@@ -167,6 +181,7 @@ public class S3ObjectsProvider {
    */
   private ObjectMetadata getS3ObjectDetails( Bucket bucket, String objectKey ) throws SdkClientException {
     return s3Client.getObjectMetadata( bucket.getName(), objectKey );
+
   }
 
   /**
@@ -182,4 +197,5 @@ public class S3ObjectsProvider {
   public long getS3ObjectContentLenght( Bucket bucket, String objectKey ) throws SdkClientException {
     return getS3ObjectDetails( bucket, objectKey ).getContentLength();
   }
+
 }

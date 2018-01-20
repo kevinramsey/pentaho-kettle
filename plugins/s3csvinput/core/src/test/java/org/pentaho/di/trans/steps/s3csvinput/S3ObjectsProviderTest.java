@@ -22,6 +22,7 @@
 
 package org.pentaho.di.trans.steps.s3csvinput;
 
+
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -35,7 +36,11 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runners.Suite;
+import org.mockito.ArgumentMatcher;
+import org.omg.CORBA.DynAnyPackage.Invalid;
 
+import javax.ws.rs.HEAD;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,21 +48,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+
 public class S3ObjectsProviderTest {
   private static final String BUCKET1_NAME = "Bucket1";
   private static final String BUCKET2_NAME = "Bucket2";
   private static final String BUCKET3_NAME = "Bucket3";
+
   private static final String UNKNOWN_BUCKET = "UnknownBucket";
   private static final Bucket BUCKET2 = new Bucket( BUCKET2_NAME );
   private static final Bucket BUCKET3 = new Bucket( BUCKET3_NAME );
@@ -125,9 +134,12 @@ public class S3ObjectsProviderTest {
   }
 
   @Test public void testGetBucketsNames() throws Exception {
+
+
     String[] actual = provider.getBucketsNames();
     assertArrayEquals( EXPECTED_BUCKETS_NAMES, actual );
   }
+
 
   @Test public void testGetBucketFound() throws Exception {
     Bucket actual = provider.getBucket( BUCKET2_NAME );
@@ -190,4 +202,5 @@ public class S3ObjectsProviderTest {
 
     return s3Client;
   }
+
 }
