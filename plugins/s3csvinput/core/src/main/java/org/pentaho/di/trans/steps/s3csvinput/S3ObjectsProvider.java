@@ -43,7 +43,6 @@ public class S3ObjectsProvider {
     super();
     this.s3Client = s3Client;
 
-    Invalid class name: org.jets3t.service.utils.RestUtils$ConnManagerFactory when connecting to Amazon S3 bucket in PDI 8.0 (8.0 Suite)
   }
 
   /**
