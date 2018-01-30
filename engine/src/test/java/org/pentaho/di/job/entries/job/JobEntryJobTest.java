@@ -29,10 +29,12 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.verifyNew;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -50,9 +52,11 @@ import org.pentaho.di.cluster.SlaveServer;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.ObjectLocationSpecificationMethod;
 import org.pentaho.di.core.database.DatabaseMeta;
+
 import org.pentaho.di.core.util.CurrentDirectoryResolver;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.job.Job;
+
 import org.pentaho.di.job.JobMeta;
 import org.pentaho.di.repository.ObjectId;
 import org.pentaho.di.repository.Repository;
@@ -60,8 +64,10 @@ import org.pentaho.di.repository.RepositoryDirectoryInterface;
 import org.pentaho.di.repository.StringObjectId;
 import org.pentaho.di.resource.ResourceNamingInterface;
 import org.pentaho.metastore.api.IMetaStore;
+
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
 import org.w3c.dom.Node;
 
 @RunWith( PowerMockRunner.class )
@@ -513,6 +519,7 @@ public class JobEntryJobTest {
 
   @Test
   public void testExportResources() throws Exception {
+
     JobMeta meta = mock( JobMeta.class );
     JobEntryJob jej = spy( new JobEntryJob( JOB_ENTRY_JOB_NAME ) );
     jej.setDescription( JOB_ENTRY_DESCRIPTION );
@@ -529,3 +536,4 @@ public class JobEntryJobTest {
     verify( jej ).setSpecificationMethod( ObjectLocationSpecificationMethod.FILENAME );
   }
 }
+

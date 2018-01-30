@@ -45,6 +45,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runners.Suite;
 import org.mockito.Mockito;
 import org.pentaho.di.cluster.SlaveServer;
 import org.pentaho.di.core.Const;
@@ -62,8 +63,10 @@ import org.pentaho.di.core.variables.Variables;
 import org.pentaho.di.job.Job;
 import org.pentaho.di.job.JobMeta;
 import org.pentaho.di.repository.Repository;
+
 import org.pentaho.di.repository.RepositoryDirectory;
 import org.pentaho.di.repository.RepositoryDirectoryInterface;
+
 import org.pentaho.di.resource.ResourceNamingInterface;
 import org.pentaho.di.trans.TransMeta;
 import org.pentaho.metastore.api.IMetaStore;
@@ -230,6 +233,7 @@ public class JobEntryTransTest {
     verify( jobEntryTrans ).setSpecificationMethod( ObjectLocationSpecificationMethod.FILENAME );
   }
 
+
   @Test
   public void testPrepareFieldNamesParameters() throws UnknownParamException {
     // array of params
@@ -350,4 +354,5 @@ public class JobEntryTransTest {
     Assert.assertEquals( parentValue1, transMeta.getVariable( param1 ) );
     Assert.assertEquals( parentValue2, transMeta.getVariable( param2 ) );
   }
+
 }

@@ -27,6 +27,7 @@ import org.junit.Before;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -166,6 +167,8 @@ public class StepWithMappingMetaTest {
     when( transMeta.exportResources( any(), anyMap(), any(), any(), any() ) ).thenReturn( testName );
 
     stepWithMappingMeta.exportResources( null, null, null, null, null );
+
+
 
     verify( transMeta ).setFilename( "${" + Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY + "}/" + testName );
     verify( stepWithMappingMeta ).setSpecificationMethod( ObjectLocationSpecificationMethod.FILENAME );

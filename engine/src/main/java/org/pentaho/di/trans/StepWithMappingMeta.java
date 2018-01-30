@@ -422,7 +422,9 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
       // To get a relative path to it, we inject
       // ${Internal.Entry.Current.Directory}
       //
+
       String newFilename = "${" + INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY + "}/" + proposedNewFilename;
+
 
 
       // Set the correct filename inside the XML.

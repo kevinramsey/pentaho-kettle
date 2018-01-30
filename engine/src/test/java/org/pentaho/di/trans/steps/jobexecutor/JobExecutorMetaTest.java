@@ -31,14 +31,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runners.Suite;
 import org.mockito.Mockito;
+
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.ObjectLocationSpecificationMethod;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.variables.VariableSpace;
+
 import org.pentaho.di.core.variables.Variables;
 import org.pentaho.di.job.JobMeta;
 import org.pentaho.di.junit.rules.RestorePDIEngineEnvironment;
+
 import org.pentaho.di.repository.Repository;
 import org.pentaho.di.resource.ResourceNamingInterface;
 import org.pentaho.di.trans.step.StepMeta;
@@ -128,6 +132,7 @@ public class JobExecutorMetaTest {
     verify( jobExecutorMeta ).setSpecificationMethod( ObjectLocationSpecificationMethod.FILENAME );
   }
 
+
   @Test
   public void testLoadJobMeta() throws KettleException {
     String param1 = "param1";
@@ -168,4 +173,5 @@ public class JobExecutorMetaTest {
     Assert.assertEquals( parentValue2, jobMeta.getVariable( param2 ) );
     Assert.assertEquals( childValue3, jobMeta.getVariable( param3 ) );
   }
+
 }
