@@ -66,6 +66,8 @@ public class RunConfigurationInjectExtensionPoint implements ExtensionPointInter
 
     RunConfigurationManager embeddedRunConfigurationManager =  EmbeddedRunConfigurationManager.build( embeddedMetaStore );
 
+
+
     //will load and save to meta all run configurations
     for ( JobEntryTrans trans : job.getActiveJobEntryTransformations().values() ) {
       RunConfiguration loadedRunConfiguration = runConfigurationManager.load( jobMeta.environmentSubstitute( trans.getRunConfiguration() ) );
