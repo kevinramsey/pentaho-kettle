@@ -90,7 +90,9 @@ public class KettleLogStore {
           long minTimeBoundary = new Date().getTime() - maxLogTimeoutMinutes * 60 * 1000;
 
 
+
           // Remove all the old lines.
+
 
           appender.removeBufferLinesBefore( minTimeBoundary );
         }

@@ -147,8 +147,8 @@ public class LoggingBufferTest {
   }
 
   @Test
-
   public void testRemoveBufferLinesBefore() {
+
 
     LoggingBuffer loggingBuffer = new LoggingBuffer( 100 );
     for ( int i = 0; i < 40; i++ ) {
@@ -159,6 +159,7 @@ public class LoggingBufferTest {
     }
     loggingBuffer.removeBufferLinesBefore( 20 );
     Assert.assertEquals( 20, loggingBuffer.size() );
+
 
   }
 
@@ -187,6 +188,7 @@ public class LoggingBufferTest {
     }
     loggingBuffer.removeChannelFromBuffer( logChannelId );
     Assert.assertEquals( 10, loggingBuffer.size() );
+
 
   }
 

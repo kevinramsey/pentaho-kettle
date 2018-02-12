@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LoggingBufferConcurrencyTest {
 
+
   private LoggingBuffer buffer;
 
   @Test
@@ -85,4 +86,5 @@ public class LoggingBufferConcurrencyTest {
       return buffer.getBuffer();
     }
   }
+
 }

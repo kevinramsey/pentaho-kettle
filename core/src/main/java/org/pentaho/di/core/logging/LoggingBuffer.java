@@ -26,6 +26,8 @@ import com.google.common.annotations.VisibleForTesting;
 import org.pentaho.di.core.Const;
 
 
+
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,8 +49,10 @@ public class LoggingBuffer {
   private String name;
 
 
+
   private List<BufferLine> buffer;
   private ReadWriteLock lock = new ReentrantReadWriteLock();
+
 
 
   private int bufferSize;
@@ -164,6 +168,8 @@ public class LoggingBuffer {
   public void doAppend( KettleLoggingEvent event ) {
     if ( event.getMessage() instanceof LogMessage ) {
 
+
+
       lock.writeLock().lock();
       try {
         buffer.add( new BufferLine( event ) );
@@ -276,6 +282,8 @@ public class LoggingBuffer {
   public String dump() {
     StringBuilder buf = new StringBuilder( 50000 );
 
+
+
     lock.readLock().lock();
     try {
       buffer.forEach( line -> {
@@ -312,6 +320,8 @@ public class LoggingBuffer {
    */
   @Deprecated
   public List<BufferLine> getBufferLinesBefore( long minTimeBoundary ) {
+
+
 
     lock.readLock().lock();
     try {
@@ -364,7 +374,9 @@ public class LoggingBuffer {
   }
 
 
+
   private static String getLogChId( BufferLine bufferLine ) {
+
 
     return ( (LogMessage) bufferLine.getEvent().getMessage() ).getLogChannelId();
   }
