@@ -96,7 +96,9 @@ public class XMLInputStream extends BaseStep implements StepInterface {
       openNextFile();
       resetElementCounters();
 
+
       prepareProcessPreviousFields();
+
 
     }
 
@@ -116,7 +118,9 @@ public class XMLInputStream extends BaseStep implements StepInterface {
               meta.sourceFieldName ) );
         }
 
+
         prepareProcessPreviousFields();
+
 
       }
       if ( data.xmlEventReader == null ) {
@@ -318,7 +322,9 @@ public class XMLInputStream extends BaseStep implements StepInterface {
         r = RowDataUtil.addRowData( (Object[]) data.currentInputRow.clone(), data.previousFieldsNumber, r );
       }
 
+
       putRow( data.finalOutputRowMeta, r );
+
 
     }
   }
