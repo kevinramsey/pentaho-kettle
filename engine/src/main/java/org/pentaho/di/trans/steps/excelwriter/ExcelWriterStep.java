@@ -759,6 +759,7 @@ public class ExcelWriterStep extends BaseStep implements StepInterface {
       if ( meta.isHeaderEnabled() && !( !data.createNewSheet && meta.isAppendOmitHeader() && appendingToSheet ) ) {
         writeHeader();
       }
+
       if ( meta.isStreamingData() && meta.isTemplateEnabled() ) {
         Sheet templateSheet = ((XSSFWorkbook) data.wb).getSheet( data.realSheetname );
         int currentRowNum = templateSheet.getLastRowNum();
@@ -772,6 +773,7 @@ public class ExcelWriterStep extends BaseStep implements StepInterface {
         data.wb = sxssfWorkbook;
         data.sheet = sxssfWorkbook.getSheet( data.realSheetname );
       }
+
       if ( log.isDebug() ) {
         logDebug( BaseMessages.getString( PKG, "ExcelWriterStep.Log.FileOpened", buildFilename ) );
       }

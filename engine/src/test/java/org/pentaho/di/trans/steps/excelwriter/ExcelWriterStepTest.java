@@ -48,6 +48,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doReturn;
@@ -55,6 +56,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
 import static org.mockito.Mockito.when;
 
 public class ExcelWriterStepTest {
@@ -85,11 +87,13 @@ public class ExcelWriterStepTest {
     stepMeta = new ExcelWriterStepMeta();
     metaMock = mock( ExcelWriterStepMeta.class );
     dataMock = mock( ExcelWriterStepData.class );
+
   }
 
   @After
   public void cleanUp() {
     mockHelper.cleanUp();
+
   }
 
   @Test
@@ -266,6 +270,7 @@ public class ExcelWriterStepTest {
     step.prepareNextOutputFile();
   }
 
+
   @Test
   public void testWriteUsingTemplateWithFormatting() throws Exception {
     assertTrue( step.init( metaMock, dataMock ) );
@@ -304,6 +309,7 @@ public class ExcelWriterStepTest {
     // without the fix for PDI-17146, createRow would generate an exception
     verify( dataMock.sheet, times( 1 ) ).createRow( anyInt() );
   }
+
 
   private HSSFWorkbook createWorkbook( FileObject file ) throws Exception {
     HSSFWorkbook wb = null;
