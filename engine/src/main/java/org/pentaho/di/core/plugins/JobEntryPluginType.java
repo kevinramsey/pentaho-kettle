@@ -78,10 +78,13 @@ public class JobEntryPluginType extends BasePluginType implements PluginTypeInte
     return pluginType;
   }
 
+
+
   @Override
   protected String getXmlPluginFile() {
     return Const.XML_FILE_KETTLE_JOB_ENTRIES;
   }
+
 
   @Override
   protected String getAlternativePluginFile() {
@@ -91,6 +94,7 @@ public class JobEntryPluginType extends BasePluginType implements PluginTypeInte
   @Override
   protected String getMainTag() {
     return "job-entries";
+
   }
 
   @Override

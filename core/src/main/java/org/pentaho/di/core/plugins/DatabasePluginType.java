@@ -55,6 +55,8 @@ public class DatabasePluginType extends BasePluginType implements PluginTypeInte
   @Override
   protected String getXmlPluginFile() {
     return Const.XML_FILE_KETTLE_DATABASE_TYPES;
+
+
   }
 
   @Override

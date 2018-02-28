@@ -56,6 +56,8 @@ public class CompressionPluginType extends BasePluginType implements PluginTypeI
   @Override
   protected String getXmlPluginFile() {
     return Const.XML_FILE_KETTLE_COMPRESSION_PROVIDERS;
+
+
   }
 
   @Override

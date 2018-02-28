@@ -100,6 +100,8 @@ public class PluginRegistryPluginType extends BasePluginType implements PluginTy
   }
 
   @Override
+
+
   protected void registerXmlPlugins() throws KettlePluginException {
     // To change body of implemented methods use File | Settings | File Templates.
   }

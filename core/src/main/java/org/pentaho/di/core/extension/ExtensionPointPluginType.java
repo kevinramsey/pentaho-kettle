@@ -58,6 +58,8 @@ public class ExtensionPointPluginType extends BasePluginType implements PluginTy
   @Override
   protected String getXmlPluginFile() {
     return Const.XML_FILE_KETTLE_EXTENSION_POINTS;
+
+
   }
 
   @Override
