@@ -167,7 +167,31 @@
               command="spoon.ripDBWizard()" />
           </menupopup>
         </menu>
-        <!-- 
+
+        <menuseparator />
+        <menu id="mdSettings" label="${Spoon.Menu.MDSettings}">
+          <menupopup id="mdsettings-popup">
+            <menuitem id="mdsettings-License" label="${Spoon.Menu.MDSettings.License}" command="spoon.openMDSettings('License')" />
+            <menu id="mdComponents" label="${Spoon.Menu.MDSettings.Components}">
+              <menupopup id="mdsettings-components-popup">
+                <menuitem id="mdsettings-ContactVerify" label="${Spoon.Menu.MDSettings.ContactVerify}" command="spoon.openMDSettings('ContactVerify')" />
+                <menuitem id="mdsettings-SmartMover" label="${Spoon.Menu.MDSettings.SmartMover}" command="spoon.openMDSettings('SmartMover')" />
+                <menuitem id="mdsettings-Cleanser" label="${Spoon.Menu.MDSettings.Cleanser}" command="spoon.openMDSettings('Cleanser')" />
+                <menuitem id="mdsettings-MatchUp" label="${Spoon.Menu.MDSettings.MatchUp}" command="spoon.openMDSettings('MatchUp')" />
+                <menuitem id="mdsettings-MatchUpGlobal" label="${Spoon.Menu.MDSettings.MatchUpGlobal}" command="spoon.openMDSettings('MatchUpGlobal')" />
+                <menuitem id="mdsettings-IpLocator" label="${Spoon.Menu.MDSettings.IpLocator}" command="spoon.openMDSettings('IpLocator')" />
+                <menuitem id="mdsettings-GlobalVerify" label="${Spoon.Menu.MDSettings.GlobalVerify}" command="spoon.openMDSettings('GlobalVerify')" />
+                <menuitem id="mdsettings-Personator" label="${Spoon.Menu.MDSettings.Personator}" command="spoon.openMDSettings('Personator')" />
+                <menuitem id="mdsettings-BusinessCoder" label="${Spoon.Menu.MDSettings.BusinessCoder}" command="spoon.openMDSettings('BusinessCoder')" />
+                <menuitem id="mdsettings-Profiler" label="${Spoon.Menu.MDSettings.Profiler}" command="spoon.openMDSettings('Profiler')" />
+                <menuitem id="mdsettings-Presort" label="${Spoon.Menu.MDSettings.PreSort}" command="spoon.openMDSettings('PreSort')" />
+                <menuitem id="mdsettings-PropertyService" label="${Spoon.Menu.MDSettings.PropertyService}" command="spoon.openMDSettings('Property')" />
+              </menupopup>
+            </menu>
+          </menupopup>
+        </menu>
+
+        <!--
         Menu item is blocked until Authentication feature will not be implemented. 
         <menuitem id="authentication" label="${Spoon.Menu.Authentication}" command="spoon.showAuthenticationOptions()" 
         /> -->
@@ -185,6 +209,22 @@
       <menupopup id="help-popup">
         <menuitem id="help-welcome" label="${Spoon.Menu.Help.Welcome}" command="spoon.showWelcomePage()" />
         <menuitem id="help-welcome" label="${Spoon.Menu.Help.Documentation}" command="spoon.showDocumentMap()" />
+        <menu id="mdSamples" label="${Spoon.Menu.MDSettings.Samples}">
+          <menupopup id="mdSamples-popup">
+            <menuitem id="mdSamples-ContactVerify" label="${Spoon.Menu.MDSettings.ContactVerify}" command="spoon.openMDSample('ContactVerify')" />
+            <menuitem id="mmdSamples-SmartMover" label="${Spoon.Menu.MDSettings.SmartMover}" command="spoon.openMDSample('SmartMover')" />
+            <menuitem id="mdSamples-BusinessCoder" label="${Spoon.Menu.MDSettings.BusinessCoder}" command="spoon.openMDSample('BusinessCoder')" />
+            <menuitem id="mdSamples-MatchUp" label="${Spoon.Menu.MDSettings.MatchUp}" command="spoon.openMDSample('MatchUp')" />
+            <menuitem id="mdSamples-MatchUpGlobal" label="${Spoon.Menu.MDSettings.MatchUpGlobal}" command="spoon.openMDSample('MatchUpGlobal')" />
+            <menuitem id="mdSamples-Iplocator" label="${Spoon.Menu.MDSettings.IpLocator}" command="spoon.openMDSample('IpLocator')" />
+            <menuitem id="mdSamples-GlobalVerify" label="${Spoon.Menu.MDSettings.GlobalVerify}" command="spoon.openMDSample('GlobalVerify')" />
+            <menuitem id="mdSamples-Personator" label="${Spoon.Menu.MDSettings.Personator}" command="spoon.openMDSample('Personator')" />
+            <menuitem id="mdSamples-Cleanser" label="${Spoon.Menu.MDSettings.Cleanser}" command="spoon.openMDSample('Cleanser')" />
+            <menuitem id="mdSamples-Profiler" label="${Spoon.Menu.MDSettings.Profiler}" command="spoon.openMDSample('Profiler')" />
+            <menuitem id="mdSamples-Presort" label="${Spoon.Menu.MDSettings.PreSort}" command="spoon.openMDSample('PreSort')" />
+            <menuitem id="mdSamples-PropertyService" label="${Spoon.Menu.MDSettings.PropertyService}" command="spoon.openMDSample('PropertyService')" />
+          </menupopup>
+        </menu>
         <menuseparator id="help-separator-1"/>
         <menuitem id="help-about" label="${Spoon.Menu.About}" command="spoon.helpAbout()" />
       </menupopup>

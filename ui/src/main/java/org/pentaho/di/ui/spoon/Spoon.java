@@ -36,18 +36,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -58,6 +47,10 @@ import java.util.regex.Pattern;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
+import com.melissadata.czlibrary.SourceFieldInfo;
+import com.melissadata.czlibrary.ui.MDDialogParent;
+import com.melissadata.kettle.MDSettings.AdvancedConfigInterface;
+import com.melissadata.kettle.MDSettings.AdvancedConfigurationDialog;
 import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.commons.vfs2.FileObject;
 import org.eclipse.jface.action.Action;
@@ -587,6 +580,7 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
   private static PrintStream originalSystemOut = System.out;
   private static PrintStream originalSystemErr = System.err;
 
+  private static AdvancedConfigInterface mdInterface;
   /**
    * This is the main procedure for Spoon.
    *
@@ -657,6 +651,9 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
       // The core plugin types don't know about UI classes. Add them in now
       // before the PluginRegistry is inited.
       splash = new Splash( display );
+      //FIXME Melissadata 1
+      // we need to load acInterface as soon as possible
+      mdInterface = new AdvancedConfigInterface();
 
       List<String> args = new ArrayList<>( Arrays.asList( a ) );
 
@@ -4236,6 +4233,100 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
       }
     }
   }
+
+  // FIXME AAA 3
+  public void openMDSettings(String id){
+	  	mdInterface.setMenuId(id);
+		AdvancedConfigurationDialog ad = new AdvancedConfigurationDialog(shell, new MDDialogParent() {
+
+			@Override
+			public VariableSpace getSpace() {
+				return Variables.getADefaultVariableSpace();
+			}
+
+			@Override
+			public SortedMap<String, SourceFieldInfo> getSourceFields() {
+				return new TreeMap<String, SourceFieldInfo>();
+			}
+
+			@Override
+			public Shell getShell() {
+				return shell;
+			}
+
+			@Override
+			public LogChannelInterface getLog() {
+				return log;
+			}
+
+			@Override
+			public Object getData() {
+				return mdInterface;
+			}
+		}, mdInterface, id);
+	  ad.open();
+}
+
+  public void openMDSample(String id) {
+    //String homeDir = System.getProperty("user.home");
+    String homeDir = Const.getUserBaseDir();
+    File fle = new File("samples");
+    homeDir = fle.getAbsolutePath();
+
+    // System.out.println(" --- HOME DIR : " + homeDir);
+
+    String samplePath = "\\MDSamples\\";
+
+    if (Const.isLinux()) {
+      homeDir = "";
+      File ff = new File("tmp").getAbsoluteFile().getParentFile();
+      samplePath = ff.getParent() + Const.FILE_SEPARATOR + "samples" + Const.FILE_SEPARATOR;
+
+    }
+
+    String filePath = "";
+
+    if ("ContactVerify".equals(id))
+      filePath = "Contact Verify\\Contact Verify.ktr";
+    if ("PreSort".equals(id))
+      filePath = "PreSort\\SamplePresort.ktr";
+    if ("SmartMover".equals(id))
+      filePath = "SmartMover\\SmartMover.ktr";
+    if ("MatchUp".equals(id))
+      filePath = "MatchUp\\Matchup.ktr";
+    if ("MatchUpGlobal".equals(id))
+      filePath = "MatchUpGlobal\\MatchupGlobal.ktr";
+    if ("GlobalVerify".equals(id))
+      filePath = "Global Verify\\GlobalVerifySample.ktr";
+    if ("IpLocator".equals(id))
+      filePath = "Iplocator\\Iplocator.ktr";
+    if ("Personator".equals(id))
+      filePath = "Personator\\Personator.ktr";
+    if ("BusinessCoder".equals(id))
+      filePath = "BusinessCoder\\BusinessCoder.ktr";
+    if ("Cleanser".equals(id))
+      filePath = "Cleanser\\GeneralizedCleanser.ktr";
+    if ("Profiler".equals(id))
+      filePath = "Profiler\\ProfilerExample.ktr";
+    if ("PropertyService".equals(id))
+      filePath = "PropertyService\\Property.ktr";
+
+    if (Const.isLinux()) {
+      filePath = filePath.replaceAll("\\\\", "/");
+    }
+
+    File chkFile = new File(homeDir + samplePath + filePath);
+    if (chkFile.exists()) {
+      String fname = homeDir + samplePath + filePath;
+      openFile(fname, false);
+    } else {
+      MessageBox ebox = new MessageBox(getShell(), SWT.OK | SWT.APPLICATION_MODAL | SWT.ICON_WARNING);
+      ebox.setText(BaseMessages.getString(PKG, "Spoon.MDsample.noFile.Title"));
+      ebox.setMessage(BaseMessages.getString(PKG, "Spoon.MDsample.noFile.Message", chkFile));
+      ebox.open();
+    }
+  }
+
 
   public void openFile() {
     openFile( false );
