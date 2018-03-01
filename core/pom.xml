@@ -549,15 +549,14 @@
             <goals>
               <goal>test-jar</goal>
             </goals>
-<<<<<<< HEAD
+
             <configuration>
               <includes>
                 <include>org/pentaho/di/junit/**</include>
                 <include>org/pentaho/di/concurrency/**</include>
               </includes>
             </configuration>
-=======
->>>>>>> [SP-4187][BACKLOG-21008] Yarn job hangs in Transformation step set with run
+
           </execution>
         </executions>
       </plugin>

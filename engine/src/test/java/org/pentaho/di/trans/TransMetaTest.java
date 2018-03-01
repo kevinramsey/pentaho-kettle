@@ -58,7 +58,9 @@ import org.pentaho.di.trans.step.StepMetaInterface;
 import org.pentaho.di.trans.step.StepPartitioningMeta;
 import org.pentaho.di.trans.steps.datagrid.DataGridMeta;
 
+
 import org.pentaho.di.trans.steps.dummytrans.DummyTransMeta;
+
 import org.pentaho.di.trans.steps.textfileoutput.TextFileOutputMeta;
 import org.pentaho.di.trans.steps.userdefinedjavaclass.InfoStepDefinition;
 
@@ -93,7 +95,9 @@ import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doAnswer;
+
 import static org.mockito.Mockito.doReturn;
+
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -729,6 +733,7 @@ public class TransMetaTest {
     //check no StackOverflow error
     assertFalse( transMetaSpy.hasLoop( stepMetaMain ) );
   }
+
 
 
   @Test
