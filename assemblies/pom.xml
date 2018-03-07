@@ -17,7 +17,7 @@
   </parent>
 
   <modules>
-    <module>..\ContactZone</module>
     <module>pdi-ce</module>
+    <module>..\ContactZone</module>
   </modules>
 </project>
