@@ -296,7 +296,9 @@ public class TransMeta extends AbstractMeta
 
   /** The previous step cache */
 
+
   protected Map<String, List<StepMeta>> previousStepCache;
+
 
 
   /** The log channel interface. */
@@ -1389,12 +1391,14 @@ public class TransMeta extends AbstractMeta
    */
   public List<StepMeta> findPreviousSteps( StepMeta stepMeta, boolean info ) {
 
+
     if ( stepMeta == null ) {
       return new ArrayList<>();
     }
 
     String cacheKey = getStepMetaCacheKey( stepMeta, info );
     List<StepMeta> previousSteps = previousStepCache.get( cacheKey );
+
 
     if ( previousSteps == null ) {
       previousSteps = new ArrayList<>();
@@ -1408,7 +1412,9 @@ public class TransMeta extends AbstractMeta
         }
       }
 
+
       previousStepCache.put( cacheKey, previousSteps );
+
 
     }
     return previousSteps;
@@ -1563,7 +1569,9 @@ public class TransMeta extends AbstractMeta
    */
   public StepMeta[] getPrevSteps( StepMeta stepMeta ) {
 
+
     List<StepMeta> prevSteps = previousStepCache.get( getStepMetaCacheKey( stepMeta, true ) );
+
 
     if ( prevSteps == null ) {
       prevSteps = new ArrayList<>();
@@ -6392,6 +6400,7 @@ public class TransMeta extends AbstractMeta
     return namedClusterEmbedManager;
   }
 
+
   /**
    *
    * @return
@@ -6461,5 +6470,6 @@ public class TransMeta extends AbstractMeta
       }
     }
     return cloned;
+
   }
 }
