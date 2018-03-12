@@ -5,7 +5,7 @@
 
   <groupId>org.pentaho</groupId>
   <artifactId>pdi-engine-serializers</artifactId>
-  <version>8.0.0.4-207</version>
+  <version>8.0.0.4-CZ.0</version>
   <packaging>bundle</packaging>
 
   <name>PDI Engine Serializers</name>
@@ -13,12 +13,12 @@
   <parent>
     <groupId>org.pentaho.di</groupId>
     <artifactId>pdi-engine-ext</artifactId>
-    <version>8.0.0.4-207</version>
+    <version>8.0.0.4-CZ.0</version>
   </parent>
 
   <properties>
     <jackson.version>2.5.4</jackson.version>
-    <pentaho-object-tunnel.version>${project.version}</pentaho-object-tunnel.version>
+    <pentaho-object-tunnel.version>${pentaho.version}</pentaho-object-tunnel.version>
     <slf4j-api.versions>1.7.7</slf4j-api.versions>
   </properties>
 

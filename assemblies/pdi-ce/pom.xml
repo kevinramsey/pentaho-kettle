@@ -5,7 +5,7 @@
 
   <groupId>org.pentaho.di</groupId>
   <artifactId>pdi-ce</artifactId>
-  <version>8.0.0.4-207</version>
+  <version>8.0.0.4-CZ.0</version>
   <packaging>pom</packaging>
 
   <name>PDI Client Community Edition</name>
@@ -13,17 +13,17 @@
   <parent>
     <artifactId>pdi-assemblies</artifactId>
     <groupId>org.pentaho.di</groupId>
-    <version>8.0.0.4-207</version>
+    <version>8.0.0.4-CZ.0</version>
   </parent>
 
   <properties>
     <assembly.dir>${project.build.directory}/assembly</assembly.dir>
     <assembly.launcher.jar>pentaho-application-launcher-${pentaho-launcher.version}.jar</assembly.launcher.jar>
 
-    <pdi-dataservice-driver-bundle.version>${project.version}</pdi-dataservice-driver-bundle.version>
+    <pdi-dataservice-driver-bundle.version>${pentaho.version}</pdi-dataservice-driver-bundle.version>
     <ael.version>8.0.0.4-207</ael.version>
-    <pdi-spark-driver.version>${project.version}</pdi-spark-driver.version>
-    <pdi-engine-spark.version>${project.version}</pdi-engine-spark.version>
+    <pdi-spark-driver.version>${pentaho.version}</pdi-spark-driver.version>
+    <pdi-engine-spark.version>${pentaho.version}</pdi-engine-spark.version>
     <rxjava.version>2.0.4</rxjava.version>
 
     <pentaho-karaf-assembly.version>8.0.0.4-207</pentaho-karaf-assembly.version>
@@ -84,29 +84,29 @@
     <databricks.version>3.2.0</databricks.version>
 
     <!-- plugins -->
-    <pdi-core-plugin.version>${project.version}</pdi-core-plugin.version>
-    <kettle-version-checker.version>${project.version}</kettle-version-checker.version>
-    <kettle-dummy-plugin.version>${project.version}</kettle-dummy-plugin.version>
-    <kettle-s3csvinput-plugin.version>${project.version}</kettle-s3csvinput-plugin.version>
-    <kettle-shapefilereader-plugin.version>${project.version}</kettle-shapefilereader-plugin.version>
-    <kettle-drools5-plugin.version>${project.version}</kettle-drools5-plugin.version>
-    <kettle-gpload-plugin.version>${project.version}</kettle-gpload-plugin.version>
-    <kettle-hl7-plugin.version>${project.version}</kettle-hl7-plugin.version>
-    <kettle-openerp-plugin.version>${project.version}</kettle-openerp-plugin.version>
-    <kettle-palo-plugin.version>${project.version}</kettle-palo-plugin.version>
-    <kettle5-log4j-plugin.version>${project.version}</kettle5-log4j-plugin.version>
+    <pdi-core-plugin.version>${pentaho.version}</pdi-core-plugin.version>
+    <kettle-version-checker.version>${pentaho.version}</kettle-version-checker.version>
+    <kettle-dummy-plugin.version>${pentaho.version}</kettle-dummy-plugin.version>
+    <kettle-s3csvinput-plugin.version>${pentaho.version}</kettle-s3csvinput-plugin.version>
+    <kettle-shapefilereader-plugin.version>${pentaho.version}</kettle-shapefilereader-plugin.version>
+    <kettle-drools5-plugin.version>${pentaho.version}</kettle-drools5-plugin.version>
+    <kettle-gpload-plugin.version>${pentaho.version}</kettle-gpload-plugin.version>
+    <kettle-hl7-plugin.version>${pentaho.version}</kettle-hl7-plugin.version>
+    <kettle-openerp-plugin.version>${pentaho.version}</kettle-openerp-plugin.version>
+    <kettle-palo-plugin.version>${pentaho.version}</kettle-palo-plugin.version>
+    <kettle5-log4j-plugin.version>${pentaho.version}</kettle5-log4j-plugin.version>
     <pdi-google-analytics-plugin.version>8.0.0.4-207</pdi-google-analytics-plugin.version>
     <pdi-salesforce-plugin.version>8.0.0.4-207</pdi-salesforce-plugin.version>
-    <ms-access-bulk-loader-plugin.version>${project.version}</ms-access-bulk-loader-plugin.version>
-    <lucid-db-streaming-loader-plugin.version>${project.version}</lucid-db-streaming-loader-plugin.version>
-    <gp-bulk-loader-plugin.version>${project.version}</gp-bulk-loader-plugin.version>
-    <elasticsearch-bulk-insert-plugin.version>${project.version}</elasticsearch-bulk-insert-plugin.version>
-    <pdi-xml-plugin.version>${project.version}</pdi-xml-plugin.version>
+    <ms-access-bulk-loader-plugin.version>${pentaho.version}</ms-access-bulk-loader-plugin.version>
+    <lucid-db-streaming-loader-plugin.version>${pentaho.version}</lucid-db-streaming-loader-plugin.version>
+    <gp-bulk-loader-plugin.version>${pentaho.version}</gp-bulk-loader-plugin.version>
+    <elasticsearch-bulk-insert-plugin.version>${pentaho.version}</elasticsearch-bulk-insert-plugin.version>
+    <pdi-xml-plugin.version>${pentaho.version}</pdi-xml-plugin.version>
     <kettle-json-plugin.version>8.0.0.4-207</kettle-json-plugin.version>
     <kettle-sap-plugin.version>8.0.0.4-207</kettle-sap-plugin.version>
     <pentaho-big-data-plugin.version>8.0.0.4-207</pentaho-big-data-plugin.version>
     <pentaho-cassandra-plugin.version>8.0.0.4-207</pentaho-cassandra-plugin.version>
-    <pdi-teradata-tpt-plugin-package.version>${project.version}</pdi-teradata-tpt-plugin-package.version>
+    <pdi-teradata-tpt-plugin-package.version>${pentaho.version}</pdi-teradata-tpt-plugin-package.version>
     <pdi-platform-utils-plugin.version>8.0.0.4-207</pdi-platform-utils-plugin.version>
     <vertica-bulkloader-plugin.version>8.0.0.4-207</vertica-bulkloader-plugin.version>
     <pdi-pur-plugin.version>8.0.0.4-207</pdi-pur-plugin.version>

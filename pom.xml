@@ -6,7 +6,7 @@
 
   <groupId>org.pentaho.di</groupId>
   <artifactId>pdi</artifactId>
-  <version>8.0.0.4-207</version>
+  <version>8.0.0.4-CZ.0</version>
   <packaging>pom</packaging>
 
   <name>Pentaho Data Integration</name>
@@ -56,6 +56,7 @@
     <!-- Pentaho dependencies -->
     <pentaho-xul.version>8.0.0.4-207</pentaho-xul.version>
     <pentaho-metastore.version>8.0.0.4-207</pentaho-metastore.version>
+    <pentaho.version>8.0.0.4-207</pentaho.version>
 
     <!-- Third-party dependencies -->
     <org.eclipse.swt.version>4.6</org.eclipse.swt.version>
