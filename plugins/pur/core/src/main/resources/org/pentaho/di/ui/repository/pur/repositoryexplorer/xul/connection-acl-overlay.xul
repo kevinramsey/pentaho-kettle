@@ -70,7 +70,7 @@ explicitly covering such access.
 		    		ondialogaccept="connectionPermissionsController.updateAcls()"
 		    		ondialogcancel="connectionPermissionsController.closeManageAclsDialog()" 
 		    		buttons="accept, cancel" buttonalign="right" title="${ManageAclsDialog.Title}"
-		    		appicon="ui/images/spoon.ico" 
+		    		appicon="ui/images/cz.ico"
 		    		resizable="true"
 		    		height="500" width="400">
 		    	<vbox flex="1">

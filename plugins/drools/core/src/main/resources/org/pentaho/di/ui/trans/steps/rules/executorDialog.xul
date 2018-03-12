@@ -13,7 +13,7 @@
   	ondialogaccept="handler.onAccept()"
   	ondialogcancel="handler.onCancel()"
     height="600" width="800"
-	appicon="ui/images/spoon.ico">
+	appicon="ui/images/cz.ico">
 	
 	<vbox flex="1">
 		<hbox id="step-name-box">

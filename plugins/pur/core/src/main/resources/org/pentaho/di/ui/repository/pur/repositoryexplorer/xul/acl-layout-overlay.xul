@@ -69,7 +69,7 @@ explicitly covering such access.
 		    		ondialogaccept="permissionsController.updateAcls()"
 		    		ondialogcancel="permissionsController.closeManageAclsDialog()" 
 		    		buttons="accept, cancel" buttonalign="right" title="${ManageAclsDialog.Title}"
-		    		appicon="ui/images/spoon.ico" 
+		    		appicon="ui/images/cz.ico"
 		    		resizable="true"
 		    		height="500" width="400">
 		    	<vbox flex="1">
@@ -120,7 +120,7 @@ explicitly covering such access.
 	    <!--         cancel   												                  -->
 	    <!--  ###############################################################################   -->    
 	    <dialog id="apply-acl-confirmation-dialog" buttonlabelaccept="${Dialog.Ok}" buttonlabelcancel="${Dialog.Cancel}" buttons="accept, cancel" ondialogcancel="permissionsController.closeApplyAclConfirmationDialog()"
-		  ondialogaccept="permissionsController.applyAcl()" buttonalign="right" title="${ApplyAclConfirmationDialog.Title}" appicon="ui/images/spoon.ico" 
+		  ondialogaccept="permissionsController.applyAcl()" buttonalign="right" title="${ApplyAclConfirmationDialog.Title}" appicon="ui/images/cz.ico"
 	  		xmlns:pen="http://www.pentaho.org/2008/xul" height="180" width="320">
 	       <vbox>
 	           <label value="${ApplyAclConfirmationDialog.ConfirmMessage1}"/>

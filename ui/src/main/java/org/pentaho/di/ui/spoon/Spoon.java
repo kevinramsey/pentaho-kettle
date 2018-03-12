@@ -47,8 +47,8 @@ import java.util.regex.Pattern;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
-import com.melissadata.czlibrary.SourceFieldInfo;
-import com.melissadata.czlibrary.ui.MDDialogParent;
+import com.melissadata.cz.SourceFieldInfo;
+import com.melissadata.cz.ui.MDDialogParent;
 import com.melissadata.kettle.MDSettings.AdvancedConfigInterface;
 import com.melissadata.kettle.MDSettings.AdvancedConfigurationDialog;
 import org.apache.commons.io.output.TeeOutputStream;
@@ -482,8 +482,10 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
       .safeAppendDirectory( BasePropertyHandler.getProperty( "documentationDirBase", "docs/" ),
           BaseMessages.getString( PKG, "Spoon.Title.STRING_DOCUMENT_WELCOME" ) );
 
-  private static final String DOCUMENTATION_URL = Const
-      .getDocUrl( BasePropertyHandler.getProperty( "documentationUrl" ) );
+  private static final String FILE_CZ_WELCOME_PAGE =   BaseMessages.getString( PKG, "Spoon.Title.STRING_DOCUMENT_WELCOME" );
+
+  //private static final String DOCUMENTATION_URL = Const.getDocUrl( BasePropertyHandler.getProperty( "documentationUrl" ) );
+  private static final String DOCUMENTATION_URL = BaseMessages.getString( PKG,  "ContactZone.STRING_DOCUMENT_DOCUMINTATION" );
 
   private static final String UNDO_MENU_ITEM = "edit-undo";
 
@@ -1727,9 +1729,13 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
         }
       };
 
-      // see if we are in webstart mode
       String webstartRoot = System.getProperty( "spoon.webstartroot" );
-      if ( webstartRoot != null ) {
+      boolean contactzone = true;
+      if(contactzone) {
+        URL url = new URL( FILE_CZ_WELCOME_PAGE );
+        addSpoonBrowser( STRING_WELCOME_TAB_NAME, url.toString(), listener );
+      } else if ( webstartRoot != null) {
+        // see if we are in webstart mode
         URL url = new URL( webstartRoot + '/' + FILE_WELCOME_PAGE );
         addSpoonBrowser( STRING_WELCOME_TAB_NAME, url.toString(), listener ); // ./docs/English/tips/index.htm
       } else {

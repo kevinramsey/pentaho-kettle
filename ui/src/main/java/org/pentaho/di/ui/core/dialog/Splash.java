@@ -91,9 +91,9 @@ public class Splash {
 
     Rectangle displayBounds = display.getPrimaryMonitor().getBounds();
 
-    // "kettle_splash.png"
+    // "kettle_splash.png" -> contact-zone-splash-page-2017.jpg
     kettle_image = loadAsResource( display, BasePropertyHandler.getProperty( "splash_image" ) );
-    // "spoon.ico"
+    // "spoon.ico" -> cz.ico
     kettle_icon = loadAsResource( display, BasePropertyHandler.getProperty( "splash_icon" ) );
     // "exclamation.png"
     exclamation_image = loadAsResource( display, BasePropertyHandler.getProperty( "exclamation_image" ) );
@@ -141,7 +141,8 @@ public class Splash {
         }
         e.gc.setFont( verFont );
         e.gc.setForeground( new Color( display, 65, 65, 65 ) );
-        e.gc.drawText( fullVersionText, 290, 205, true );
+        //e.gc.drawText( fullVersionText, 290, 205, true );
+        e.gc.drawText( fullVersionText, 210, 150, true );
 
         String inputStringDate = BuildVersion.getInstance().getBuildDate();
         String outputStringDate = "";
@@ -184,8 +185,8 @@ public class Splash {
           licFont = new Font( e.display, "Helvetica", licFontSize, SWT.NORMAL );
           e.gc.setFont( licFont );
         }
-
-        e.gc.drawText( licenseText, 290, 275, true );
+        //e.gc.drawText( licenseText, 290, 275, true );
+        e.gc.drawText( licenseText, 210, 220, true );
 
         String version =  buildVersion;
         // If this is a Milestone or RC release, warn the user
@@ -202,8 +203,10 @@ public class Splash {
         String buildDate = BaseMessages.getString( PKG, "SplashDialog.BuildDate" ) + " " + outputStringDate;
         // use the same font/size as the license text
         e.gc.setForeground( new Color( display, 65, 65, 65 ) );
-        e.gc.drawText( version, 290, 235, true );
-        e.gc.drawText( buildDate, 290, 250, true );
+//        e.gc.drawText( version, 290, 235, true );
+//        e.gc.drawText( buildDate, 290, 250, true );
+        e.gc.drawText( version, 210, 180, true );
+        e.gc.drawText( buildDate, 210, 195, true );
       }
     } );
 

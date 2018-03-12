@@ -905,7 +905,7 @@ public class GUIResource {
       SwtSvgImageUtil.getUniversalImage( display, getClass().getClassLoader(), BasePropertyHandler
         .getProperty( "MIS_image" ) );
 
-    // "ui/images/spoon.ico"
+    // "ui/images/cz.ico"
     imageSpoon = loadAsResource( display, BasePropertyHandler.getProperty( "spoon_image" ), 0 );
 
     // "ui/images/spoon_lowres.ico"

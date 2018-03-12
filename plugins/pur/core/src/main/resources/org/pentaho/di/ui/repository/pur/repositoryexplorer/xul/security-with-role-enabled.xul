@@ -171,7 +171,7 @@ explicitly covering such access.
 	    		ondialogaccept="iSecurityController.saveRole()"
 	    		ondialogcancel="iSecurityController.cancelAddRoleDialog()" 
 	    		buttons="accept, cancel" buttonalign="right" title="${AddRoleDialog.AddRole}"
-	    		appicon="ui/images/spoon.ico" 
+	    		appicon="ui/images/cz.ico"
 	    		resizable="true"
 	    		height="400" width="350">
 	       <vbox>
