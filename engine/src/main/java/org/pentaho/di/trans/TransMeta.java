@@ -120,6 +120,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.ws.rs.HEAD;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1392,9 +1393,11 @@ public class TransMeta extends AbstractMeta
   public List<StepMeta> findPreviousSteps( StepMeta stepMeta, boolean info ) {
 
 
+
     if ( stepMeta == null ) {
       return new ArrayList<>();
     }
+
 
     String cacheKey = getStepMetaCacheKey( stepMeta, info );
     List<StepMeta> previousSteps = previousStepCache.get( cacheKey );
@@ -1568,6 +1571,7 @@ public class TransMeta extends AbstractMeta
    * @return An array containing the preceding steps.
    */
   public StepMeta[] getPrevSteps( StepMeta stepMeta ) {
+
 
 
     List<StepMeta> prevSteps = previousStepCache.get( getStepMetaCacheKey( stepMeta, true ) );
@@ -6401,6 +6405,7 @@ public class TransMeta extends AbstractMeta
   }
 
 
+
   /**
    *
    * @return
@@ -6470,6 +6475,7 @@ public class TransMeta extends AbstractMeta
       }
     }
     return cloned;
+
 
   }
 }
