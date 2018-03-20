@@ -5,7 +5,9 @@
   <parent>
     <artifactId>pdi-core</artifactId>
     <groupId>org.pentaho.di.plugins</groupId>
+
     <version>9.0.0.0-SNAPSHOT</version>
+
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -13,6 +15,8 @@
   <name>PDI Core Plugins Impl</name>
 
   <properties>
+
+
     <mockito-core.version>1.10.19</mockito-core.version>
   </properties>
 

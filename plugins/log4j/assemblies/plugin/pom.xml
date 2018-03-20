@@ -8,6 +8,7 @@
     <artifactId>log4j-assemblies</artifactId>
     <groupId>org.pentaho.di.plugins</groupId>
     <version>9.0.0.0-SNAPSHOT</version>
+
   </parent>
 
   <artifactId>kettle5-log4j-plugin</artifactId>
