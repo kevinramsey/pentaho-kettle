@@ -18,7 +18,7 @@
 
   <properties>
     <jackson.version>2.5.4</jackson.version>
-    <pentaho-object-tunnel.version>${pentaho.version}</pentaho-object-tunnel.version>
+    <pentaho-object-tunnel.version>8.0.0.4-247</pentaho-object-tunnel.version>
     <slf4j-api.versions>1.7.7</slf4j-api.versions>
   </properties>
 
