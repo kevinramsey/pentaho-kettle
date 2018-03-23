@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.pentaho.di</groupId>
     <artifactId>pdi</artifactId>
-    <version>8.0.0.4-CZ.0</version>
+    <version>8.0.0.4-247</version>
   </parent>
 
   <properties>
@@ -23,10 +23,10 @@
     <maven-failsafe-plugin.reuseForks>false</maven-failsafe-plugin.reuseForks>
 
     <!-- Pentaho dependencies -->
-    <pentaho-reporting.version>8.0.0.4-207</pentaho-reporting.version>
-    <pentaho-registry.version>8.0.0.4-207</pentaho-registry.version>
-    <pentaho-connections.version>8.0.0.4-207</pentaho-connections.version>
-    <mondrian.version>8.0.0.4-207</mondrian.version>
+    <pentaho-reporting.version>8.0.0.4-247</pentaho-reporting.version>
+    <pentaho-registry.version>8.0.0.4-247</pentaho-registry.version>
+    <pentaho-connections.version>8.0.0.4-247</pentaho-connections.version>
+    <mondrian.version>8.0.0.4-247</mondrian.version>
 
     <!-- Third-party dependencies -->
     <antlr-complete.version>3.5.2</antlr-complete.version>
@@ -870,6 +870,13 @@
     </dependency>
 
     <!-- Test dependencies -->
+    <dependency>
+      <groupId>pentaho-kettle</groupId>
+      <artifactId>kettle-core</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>

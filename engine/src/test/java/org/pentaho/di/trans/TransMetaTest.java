@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -21,7 +21,6 @@
  ******************************************************************************/
 package org.pentaho.di.trans;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -52,6 +51,8 @@ import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaChangeListenerInterface;
 import org.pentaho.di.trans.step.StepMetaInterface;
 import org.pentaho.di.trans.steps.datagrid.DataGridMeta;
+import org.pentaho.di.trans.steps.streamlookup.StreamLookupMeta;
+import org.pentaho.di.trans.steps.textfileoutput.TextFileOutputMeta;
 import org.pentaho.di.trans.steps.userdefinedjavaclass.StepDefinition;
 import org.pentaho.di.trans.steps.userdefinedjavaclass.UserDefinedJavaClassDef;
 import org.pentaho.di.trans.steps.userdefinedjavaclass.UserDefinedJavaClassMeta;
@@ -60,6 +61,7 @@ import org.pentaho.metastore.stores.memory.MemoryMetaStore;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -73,12 +75,15 @@ import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.spy;
 
 public class TransMetaTest {
   public static final String STEP_NAME = "Any step name";
@@ -458,12 +463,147 @@ public class TransMetaTest {
       Mockito.mock( OverwritePrompter.class ) );
     meta.setInternalKettleVariables( null );
 
-    Assert.assertEquals( repDirectory.getPath(), meta.getVariable( Const.INTERNAL_VARIABLE_TRANSFORMATION_REPOSITORY_DIRECTORY ) );
+    assertEquals( repDirectory.getPath(), meta.getVariable( Const.INTERNAL_VARIABLE_TRANSFORMATION_REPOSITORY_DIRECTORY ) );
   }
 
   @Test
   public void testTransWithOneStepIsConsideredUsed() throws Exception {
     TransMeta transMeta = new TransMeta( getClass().getResource( "one-step-trans.ktr" ).getPath() );
     assertEquals( 1, transMeta.getUsedSteps().size() );
+  }
+
+  @Test
+  public void testGetPrevStepFields() throws KettleStepException {
+    DataGridMeta dgm = new DataGridMeta();
+    dgm.allocate( 2 );
+    dgm.setFieldName( new String[]{ "id" } );
+    dgm.setFieldType( new String[]{ ValueMetaFactory.getValueMetaName( ValueMetaInterface.TYPE_INTEGER ) } );
+    List<List<String>> dgm1Data = new ArrayList<>();
+    dgm1Data.add( Collections.singletonList( "1" ) );
+    dgm1Data.add( Collections.singletonList( "2" ) );
+    dgm.setDataLines( dgm1Data );
+
+    StepMeta dg = new StepMeta( "input1", dgm );
+    TextFileOutputMeta textFileOutputMeta = new TextFileOutputMeta();
+    StepMeta textFileOutputStep = new StepMeta( "BACKLOG-21039", textFileOutputMeta );
+
+    TransHopMeta hop = new TransHopMeta( dg, textFileOutputStep, true );
+    transMeta.addStep( dg );
+    transMeta.addStep( textFileOutputStep );
+    transMeta.addTransHop( hop );
+
+    RowMetaInterface row = transMeta.getPrevStepFields( textFileOutputStep );
+    assertNotNull( row );
+    assertEquals( 1, row.size() );
+    assertEquals( "id", row.getValueMeta( 0 ).getName() );
+    assertEquals( ValueMetaInterface.TYPE_INTEGER, row.getValueMeta( 0 ).getType() );
+
+    dgm.setFieldName( new String[]{ "id", "name" } );
+    dgm.setFieldType( new String[]{
+      ValueMetaFactory.getValueMetaName( ValueMetaInterface.TYPE_INTEGER ),
+      ValueMetaFactory.getValueMetaName( ValueMetaInterface.TYPE_STRING ),
+    } );
+
+    row = transMeta.getPrevStepFields( textFileOutputStep );
+    assertNotNull( row );
+    assertEquals( 2, row.size() );
+    assertEquals( "id", row.getValueMeta( 0 ).getName() );
+    assertEquals( "name", row.getValueMeta( 1 ).getName() );
+    assertEquals( ValueMetaInterface.TYPE_INTEGER, row.getValueMeta( 0 ).getType() );
+    assertEquals( ValueMetaInterface.TYPE_STRING, row.getValueMeta( 1 ).getType() );
+  }
+
+  @Test
+  public void testHasLoop_simpleLoop() throws Exception {
+    //main->2->3->main
+    TransMeta transMetaSpy = spy( transMeta );
+    StepMeta stepMetaMain = createStepMeta( "mainStep" );
+    StepMeta stepMeta2 = createStepMeta( "step2" );
+    StepMeta stepMeta3 = createStepMeta( "step3" );
+    List<StepMeta> mainPrevSteps = new ArrayList<>();
+    mainPrevSteps.add( stepMeta2 );
+    doReturn( mainPrevSteps ).when( transMetaSpy ).findPreviousSteps( stepMetaMain, true );
+    when( transMetaSpy.findNrPrevSteps( stepMetaMain ) ).thenReturn( 1 );
+    when( transMetaSpy.findPrevStep( stepMetaMain, 0 ) ).thenReturn( stepMeta2 );
+    List<StepMeta> stepmeta2PrevSteps = new ArrayList<>();
+    stepmeta2PrevSteps.add( stepMeta3 );
+    doReturn( stepmeta2PrevSteps ).when( transMetaSpy ).findPreviousSteps( stepMeta2, true );
+    when( transMetaSpy.findNrPrevSteps( stepMeta2 ) ).thenReturn( 1 );
+    when( transMetaSpy.findPrevStep( stepMeta2, 0 ) ).thenReturn( stepMeta3 );
+    List<StepMeta> stepmeta3PrevSteps = new ArrayList<>();
+    stepmeta3PrevSteps.add( stepMetaMain );
+    doReturn( stepmeta3PrevSteps ).when( transMetaSpy ).findPreviousSteps( stepMeta3, true );
+    when( transMetaSpy.findNrPrevSteps( stepMeta3 ) ).thenReturn( 1 );
+    when( transMetaSpy.findPrevStep( stepMeta3, 0 ) ).thenReturn( stepMetaMain );
+    assertTrue( transMetaSpy.hasLoop( stepMetaMain ) );
+  }
+
+  @Test
+  public void testHasLoop_loopInPrevSteps() throws Exception {
+    //main->2->3->4->3
+    TransMeta transMetaSpy = spy( transMeta );
+    StepMeta stepMetaMain = createStepMeta( "mainStep" );
+    StepMeta stepMeta2 = createStepMeta( "step2" );
+    StepMeta stepMeta3 = createStepMeta( "step3" );
+    StepMeta stepMeta4 = createStepMeta( "step4" );
+    when( transMetaSpy.findNrPrevSteps( stepMetaMain ) ).thenReturn( 1 );
+    when( transMetaSpy.findPrevStep( stepMetaMain, 0 ) ).thenReturn( stepMeta2 );
+    when( transMetaSpy.findNrPrevSteps( stepMeta2 ) ).thenReturn( 1 );
+    when( transMetaSpy.findPrevStep( stepMeta2, 0 ) ).thenReturn( stepMeta3 );
+    when( transMetaSpy.findNrPrevSteps( stepMeta3 ) ).thenReturn( 1 );
+    when( transMetaSpy.findPrevStep( stepMeta3, 0 ) ).thenReturn( stepMeta4 );
+    when( transMetaSpy.findNrPrevSteps( stepMeta4 ) ).thenReturn( 1 );
+    when( transMetaSpy.findPrevStep( stepMeta4, 0 ) ).thenReturn( stepMeta3 );
+    //check no StackOverflow error
+    assertFalse( transMetaSpy.hasLoop( stepMetaMain ) );
+  }
+
+  @Test
+  public void testGetPreviousStepsWhenStreamLookupStepPassedShouldClearCacheAndCallFindPreviousStepsWithFalseParam() {
+    TransMeta transMeta = mock( TransMeta.class );
+    StepMeta stepMeta = new StepMeta( "stream_lookup_id", "stream_lookup_name", new StreamLookupMeta() );
+
+    List<StepMeta> expectedResult = new ArrayList<>(  );
+    List<StepMeta> invalidResult = new ArrayList<>(  );
+    expectedResult.add( new StepMeta( "correct_mock", "correct_mock", new TextFileOutputMeta() ) );
+    invalidResult.add( new StepMeta( "incorrect_mock", "incorrect_mock", new TextFileOutputMeta() ) );
+
+    doNothing().when( transMeta ).clearPreviousStepCache();
+    when( transMeta.findPreviousSteps( any( StepMeta.class ), eq( false ) ) ).thenReturn( expectedResult );
+    when( transMeta.findPreviousSteps( any( StepMeta.class ), eq( true ) ) ).thenReturn( invalidResult );
+    when( transMeta.getPreviousSteps( any() ) ).thenCallRealMethod();
+
+    List<StepMeta> actualResult = transMeta.getPreviousSteps( stepMeta );
+
+    verify( transMeta, times( 1 ) ).clearPreviousStepCache();
+    assertEquals( expectedResult, actualResult );
+  }
+
+  @Test
+  public void testGetPreviousStepsWhenNotStreamLookupStepPassedShouldCallFindPreviousStepsWithTrueParam() {
+    TransMeta transMeta = mock( TransMeta.class );
+    StepMeta stepMeta = new StepMeta( "not_stream_lookup_id", "not_stream_lookup_name", new TextFileOutputMeta() );
+
+    List<StepMeta> expectedResult = new ArrayList<>(  );
+    List<StepMeta> invalidResult = new ArrayList<>(  );
+    expectedResult.add( new StepMeta( "correct_mock", "correct_mock", new TextFileOutputMeta() ) );
+    invalidResult.add( new StepMeta( "incorrect_mock", "incorrect_mock", new TextFileOutputMeta() ) );
+
+    doNothing().when( transMeta ).clearPreviousStepCache();
+    when( transMeta.getPreviousSteps( any() ) ).thenCallRealMethod();
+    when( transMeta.findPreviousSteps( any( StepMeta.class ) ) ).thenCallRealMethod();
+    when( transMeta.findPreviousSteps( any( StepMeta.class ), eq( true ) ) ).thenReturn( expectedResult );
+    when( transMeta.findPreviousSteps( any( StepMeta.class ), eq( false ) ) ).thenReturn( invalidResult );
+
+    List<StepMeta> actualResult = transMeta.getPreviousSteps( stepMeta );
+
+    verify( transMeta, times( 0 ) ).clearPreviousStepCache();
+    assertEquals( expectedResult, actualResult );
+  }
+
+  private StepMeta createStepMeta( String name ) {
+    StepMeta stepMeta = mock( StepMeta.class );
+    when( stepMeta.getName() ).thenReturn( name );
+    return stepMeta;
   }
 }

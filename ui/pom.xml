@@ -21,8 +21,8 @@
     <maven-surefire-plugin.reuseForks>false</maven-surefire-plugin.reuseForks>
 
     <!-- Pentaho dependencies -->
-    <pentaho-vfs-browser.version>8.0.0.4-207</pentaho-vfs-browser.version>
-    <pentaho-capability-manager.version>${pentaho.version}</pentaho-capability-manager.version>
+    <pentaho-vfs-browser.version>8.0.0.4-247</pentaho-vfs-browser.version>
+    <pentaho-capability-manager.version>8.0.0.4-247</pentaho-capability-manager.version>
 
     <!-- Third-party dependencies -->
     <common.version>3.3.0-v20070426</common.version>
