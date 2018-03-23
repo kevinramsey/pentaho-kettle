@@ -13,14 +13,14 @@
   <parent>
     <artifactId>pdi-assemblies</artifactId>
     <groupId>org.pentaho.di</groupId>
-    <version>8.0.0.4-247</version>
+    <version>8.0.0.4-CZ.0</version>
   </parent>
 
   <properties>
     <assembly.dir>${project.build.directory}/assembly</assembly.dir>
     <assembly.launcher.jar>pentaho-application-launcher-${pentaho-launcher.version}.jar</assembly.launcher.jar>
 
-    <pdi-dataservice-driver-bundle.version>${project.version}</pdi-dataservice-driver-bundle.version>
+    <pdi-dataservice-driver-bundle.version>8.0.0.4-247</pdi-dataservice-driver-bundle.version>
     <ael.version>8.0.0.4-247</ael.version>
     <pdi-spark-driver.version>8.0.0.4-247</pdi-spark-driver.version>
     <pdi-engine-spark.version>8.0.0.4-247</pdi-engine-spark.version>

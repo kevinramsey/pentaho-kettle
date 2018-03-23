@@ -13,7 +13,7 @@
   <parent>
     <groupId>org.pentaho.di</groupId>
     <artifactId>pdi</artifactId>
-    <version>8.0.0.4-247</version>
+    <version>8.0.0.4-CZ.0</version>
   </parent>
 
   <properties>
