@@ -36,14 +36,14 @@
     <dependency>
       <groupId>com.melissadata</groupId>
       <artifactId>cz.library</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>8.0.0</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
       <groupId>com.melissadata.kettle</groupId>
       <artifactId>MDSettings</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>8.0.0</version>
       <type>jar</type>
     </dependency>
 
