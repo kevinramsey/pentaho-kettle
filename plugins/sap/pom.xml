@@ -6,11 +6,11 @@
   <parent>
     <groupId>org.pentaho.di.plugins</groupId>
     <artifactId>pdi-plugins</artifactId>
-    <version>8.1.0.0-SNAPSHOT</version>
+    <version>8.0.0.4-247</version>
   </parent>
 
   <artifactId>sap</artifactId>
-  <version>8.1.0.0-SNAPSHOT</version>
+  <version>8.0.0.4-247</version>
   <packaging>pom</packaging>
 
   <name>PDI SAP Plugin</name>
@@ -35,7 +35,7 @@
     <jface.version>3.3.0-I20070606-0010</jface.version>
     <junit.version>4.7</junit.version>
     <ascsapjco3wrp.version>20100529</ascsapjco3wrp.version>
-    <pdi.version>8.1.0.0-SNAPSHOT</pdi.version>
+    <kettle.version>8.0.0.4-247</kettle.version>
   </properties>
 
 
@@ -44,19 +44,19 @@
       <dependency>
         <groupId>pentaho-kettle</groupId>
         <artifactId>kettle-engine</artifactId>
-        <version>${pdi.version}</version>
+        <version>${kettle.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>pentaho-kettle</groupId>
         <artifactId>kettle-core</artifactId>
-        <version>${pdi.version}</version>
+        <version>${kettle.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>pentaho-kettle</groupId>
         <artifactId>kettle-ui-swt</artifactId>
-        <version>${pdi.version}</version>
+        <version>${kettle.version}</version>
         <scope>provided</scope>
         <exclusions>
           <exclusion>
@@ -68,7 +68,7 @@
       <dependency>
         <groupId>pentaho</groupId>
         <artifactId>metastore</artifactId>
-        <version>${pdi.version}</version>
+        <version>${kettle.version}</version>
         <scope>provided</scope>
         <exclusions>
           <exclusion>
@@ -124,7 +124,7 @@
       <dependency>
         <groupId>pentaho-kettle</groupId>
         <artifactId>kettle-engine</artifactId>
-        <version>${pdi.version}</version>
+        <version>${kettle.version}</version>
         <classifier>tests</classifier>
         <scope>test</scope>
       </dependency>

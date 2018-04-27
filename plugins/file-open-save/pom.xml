@@ -6,11 +6,11 @@
   <parent>
     <groupId>org.pentaho.di.plugins</groupId>
     <artifactId>pdi-plugins</artifactId>
-    <version>8.1.0.0-SNAPSHOT</version>
+    <version>8.0.0.4-247</version>
   </parent>
 
   <artifactId>file-open-save</artifactId>
-  <version>8.1.0.0-SNAPSHOT</version>
+  <version>8.0.0.4-247</version>
   <packaging>pom</packaging>
 
   <name>PDI File Open and Save Plugin</name>
@@ -21,16 +21,15 @@
   </modules>
 
   <properties>
-    <pdi.version>8.1.0.0-SNAPSHOT</pdi.version>
+    <dependency.pentaho-kettle.version>8.0.0.4-247</dependency.pentaho-kettle.version>
     <dependency.karaf.version>3.0.3</dependency.karaf.version>
     <dependency.osgi.version>4.3.1</dependency.osgi.version>
     <version.for.license>${project.version}</version.for.license>
     <js.project.list>requirejs,requirejs-text,angular,require-css,angular-i18n</js.project.list>
     <angular.version>1.5.8</angular.version>
-    <pentaho-osgi-bundles.version>8.1.0.0-SNAPSHOT</pentaho-osgi-bundles.version>
-    <angular-ui-router.version>0.4.2</angular-ui-router.version>
+    <dependency.pentaho-osgi-bundles.revision>8.0.0.4-247</dependency.pentaho-osgi-bundles.revision>
     <karaf-maven-plugin.version>3.0.3</karaf-maven-plugin.version>
-    <pdi.version>8.1.0.0-SNAPSHOT</pdi.version>
+    <dependency.kettle.ui.swt.revision>8.0.0.4-247</dependency.kettle.ui.swt.revision>
     <cxf.karaf.version>3.0.13</cxf.karaf.version>
     <requirejs-text.version>2.0.10</requirejs-text.version>
     <require-css.version>0.1.8</require-css.version>
@@ -48,7 +47,7 @@
       <dependency>
         <groupId>pentaho-kettle</groupId>
         <artifactId>kettle-core</artifactId>
-        <version>${pdi.version}</version>
+        <version>${dependency.pentaho-kettle.version}</version>
         <scope>provided</scope>
         <!--<exclusions>-->
           <!--<exclusion>-->
@@ -60,13 +59,13 @@
       <dependency>
         <groupId>pentaho-kettle</groupId>
         <artifactId>kettle-ui-swt</artifactId>
-        <version>${pdi.version}</version>
+        <version>${dependency.kettle.ui.swt.revision}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>pentaho-kettle</groupId>
         <artifactId>kettle-engine</artifactId>
-        <version>${pdi.version}</version>
+        <version>${dependency.pentaho-kettle.version}</version>
         <scope>provided</scope>
         <!--<exclusions>-->
           <!--<exclusion>-->
@@ -114,7 +113,7 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
-        <version>${fasterxml.jackson.core.version}</version>
+        <version>${dependency.fasterxml.jackson.version}</version>
         <exclusions>
           <exclusion>
             <artifactId>*</artifactId>
@@ -125,18 +124,7 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-annotations</artifactId>
-        <version>${fasterxml.jackson.core.version}</version>
-        <exclusions>
-          <exclusion>
-            <artifactId>*</artifactId>
-            <groupId>*</groupId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${fasterxml.jackson.core.version}</version>
+        <version>${dependency.fasterxml.jackson.version}</version>
         <exclusions>
           <exclusion>
             <artifactId>*</artifactId>
@@ -147,6 +135,17 @@
       <dependency>
         <groupId>com.fasterxml.jackson.jaxrs</groupId>
         <artifactId>jackson-jaxrs-json-provider</artifactId>
+        <version>${dependency.fasterxml.jackson.version}</version>
+        <exclusions>
+          <exclusion>
+            <artifactId>*</artifactId>
+            <groupId>*</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
         <version>${dependency.fasterxml.jackson.version}</version>
         <exclusions>
           <exclusion>

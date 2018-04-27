@@ -23,7 +23,21 @@
 
 package org.pentaho.di.trans;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.vfs2.FileName;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -107,25 +121,12 @@ import org.pentaho.di.trans.steps.mapping.MappingMeta;
 import org.pentaho.di.trans.steps.missing.MissingTrans;
 import org.pentaho.di.trans.steps.named.cluster.NamedClusterEmbedManager;
 import org.pentaho.di.trans.steps.singlethreader.SingleThreaderMeta;
+import org.pentaho.di.trans.steps.streamlookup.StreamLookupMeta;
 import org.pentaho.di.trans.steps.transexecutor.TransExecutorMeta;
 import org.pentaho.metastore.api.IMetaStore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This class defines information about a transformation and offers methods to save and load it from XML or a PDI
@@ -288,7 +289,7 @@ public class TransMeta extends AbstractMeta
   protected Map<String, Boolean> loopCache;
 
   /** The previous step cache */
-  protected Map<StepMeta, List<StepMeta>> previousStepCache;
+  protected Map<String, List<StepMeta>> previousStepCache;
 
   /** The log channel interface. */
   protected LogChannelInterface log;
@@ -1379,9 +1380,8 @@ public class TransMeta extends AbstractMeta
    * @return The list of the preceding steps
    */
   public List<StepMeta> findPreviousSteps( StepMeta stepMeta, boolean info ) {
-    List<StepMeta> previousSteps;
-
-    previousSteps = previousStepCache.get( stepMeta );
+    String cacheKey = getStepMetaCacheKey( stepMeta, info );
+    List<StepMeta> previousSteps = previousStepCache.get( cacheKey );
     if ( previousSteps == null ) {
       previousSteps = new ArrayList<>();
       for ( TransHopMeta hi : hops ) {
@@ -1393,7 +1393,7 @@ public class TransMeta extends AbstractMeta
           }
         }
       }
-      previousStepCache.put( stepMeta, previousSteps );
+      previousStepCache.put( cacheKey, previousSteps );
     }
     return previousSteps;
   }
@@ -1546,8 +1546,7 @@ public class TransMeta extends AbstractMeta
    * @return An array containing the preceding steps.
    */
   public StepMeta[] getPrevSteps( StepMeta stepMeta ) {
-    List<StepMeta> prevSteps;
-    prevSteps = previousStepCache.get(  stepMeta );
+    List<StepMeta> prevSteps = previousStepCache.get( getStepMetaCacheKey( stepMeta, true ) );
     if ( prevSteps == null ) {
       prevSteps = new ArrayList<>();
       for ( int i = 0; i < nrTransHops(); i++ ) { // Look at all the hops;
@@ -1812,7 +1811,8 @@ public class TransMeta extends AbstractMeta
 
     // Resume the regular program...
 
-    List<StepMeta> prevSteps = findPreviousSteps( stepMeta );
+    List<StepMeta> prevSteps = getPreviousSteps( stepMeta );
+
     int nrPrevious = prevSteps.size();
 
     if ( log.isDebug() ) {
@@ -1871,6 +1871,16 @@ public class TransMeta extends AbstractMeta
     stepsFieldsCache.put( fromToCacheEntry, rowMeta );
 
     return rowMeta;
+  }
+
+  @VisibleForTesting
+  List<StepMeta> getPreviousSteps( StepMeta stepMeta ) {
+    if ( stepMeta.getStepMetaInterface() instanceof StreamLookupMeta ) {
+      clearPreviousStepCache();
+      return findPreviousSteps( stepMeta, false );
+    } else {
+      return findPreviousSteps( stepMeta );
+    }
   }
 
   /**
@@ -3719,7 +3729,6 @@ public class TransMeta extends AbstractMeta
    * @return true if a loop has been found, false if no loop is found.
    */
   public boolean hasLoop( StepMeta stepMeta ) {
-    clearLoopCache();
     return hasLoop( stepMeta, null );
   }
 
@@ -4529,7 +4538,7 @@ public class TransMeta extends AbstractMeta
           stop_checking = true;
         }
 
-        if ( isStepUsedInTransHops( stepMeta ) || getSteps().size() == 1 ) {
+        if ( isStepUsedInTransHops( stepMeta ) ) {
           // Get the input & output steps!
           // Copy to arrays:
           String[] input = getPrevStepNames( stepMeta );
@@ -5765,9 +5774,13 @@ public class TransMeta extends AbstractMeta
    * @return a list of ResourceReferences
    */
   public List<ResourceReference> getResourceDependencies() {
-    return steps.stream()
-      .flatMap( (StepMeta stepMeta) -> stepMeta.getResourceDependencies( this ).stream() )
-      .collect( Collectors.toList() );
+    List<ResourceReference> resourceReferences = new ArrayList<>();
+
+    for ( StepMeta stepMeta : steps ) {
+      resourceReferences.addAll( stepMeta.getResourceDependencies( this ) );
+    }
+
+    return resourceReferences;
   }
 
   /**
@@ -6016,7 +6029,8 @@ public class TransMeta extends AbstractMeta
     loopCache.clear();
   }
 
-  private void clearPreviousStepCache() {
+  @VisibleForTesting
+  void clearPreviousStepCache() {
     previousStepCache.clear();
   }
 
@@ -6320,60 +6334,7 @@ public class TransMeta extends AbstractMeta
     return namedClusterEmbedManager;
   }
 
-  /**
-   *
-   * @return
-   */
-  public int getCacheVersion() throws KettleException {
-    HashCodeBuilder hashCodeBuilder =  new HashCodeBuilder( 17, 31 )
-        // info
-        .append( this.getName() )
-        .append( this.getTransformationType() )
-        .append( this.getSizeRowset() )
-        .append( this.getSleepTimeEmpty() )
-        .append( this.getSleepTimeFull() )
-        .append( this.isUsingUniqueConnections() )
-        .append( this.isFeedbackShown() )
-        .append( this.getFeedbackSize() )
-        .append( this.isUsingThreadPriorityManagment() )
-        .append( this.getSharedObjectsFile() )
-        .append( this.isCapturingStepPerformanceSnapShots() )
-        .append( this.getStepPerformanceCapturingDelay() )
-        .append( this.getStepPerformanceCapturingSizeLimit() )
-
-        .append( this.getMaxDateConnection() )
-        .append( this.getMaxDateTable() )
-        .append( this.getMaxDateField() )
-        .append( this.getMaxDateOffset() )
-        .append( this.getMaxDateDifference() )
-
-        .append( this.getDependencies() )
-        .append( this.getPartitionSchemas() )
-        .append( this.getSlaveServers() )
-        .append( this.getClusterSchemas() )
-        .append( this.getSlaveStepCopyPartitionDistribution() )
-        .append( this.isSlaveTransformation() )
-
-        .append( this.nrTransHops() )
-
-        // steps
-        .append( this.getSteps().size() )
-        .append( this.getStepNames() )
-
-        // hops
-        .append( this.hops );
-
-    List<StepMeta> steps = this.getSteps();
-
-    for ( StepMeta step : steps ) {
-      hashCodeBuilder
-          .append( step.getName() )
-          .append( step.getStepMetaInterface().getXML() )
-          .append( step.getClusterSchema() )
-          .append( step.getRemoteInputSteps() )
-          .append( step.getRemoteOutputSteps() )
-          .append( step.isDoingErrorHandling() );
-    }
-    return hashCodeBuilder.toHashCode();
+  private static String getStepMetaCacheKey( StepMeta stepMeta, boolean info ) {
+    return String.format( "%1$b-%2$s-%3$s", info, stepMeta.getStepID(), stepMeta.toString() );
   }
 }

@@ -23,6 +23,8 @@
 package org.pentaho.di.core.extension;
 
 import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 import org.pentaho.di.core.Const;
@@ -77,6 +79,12 @@ public class ExtensionPointPluginType extends BasePluginType implements PluginTy
 
   @Override
   protected void registerXmlPlugins() throws KettlePluginException {
+  }
+
+  @Override
+  public void handlePluginAnnotation( Class<?> clazz, Annotation annotation, List<String> libraries,
+    boolean nativePluginType, URL pluginFolder ) throws KettlePluginException {
+    super.handlePluginAnnotation( clazz, annotation, libraries, nativePluginType, pluginFolder );
   }
 
   public String[] getNaturalCategoriesOrder() {

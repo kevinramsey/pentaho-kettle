@@ -5,23 +5,23 @@
 
   <artifactId>pdi-pur-plugin-core</artifactId>
   <packaging>jar</packaging>
-  <version>8.1.0.0-SNAPSHOT</version>
+  <version>8.0.0.4-247</version>
 
   <name>PDI PUR Plugin Core</name>
 
   <parent>
     <groupId>org.pentaho.di.plugins</groupId>
     <artifactId>pur</artifactId>
-    <version>8.1.0.0-SNAPSHOT</version>
+    <version>8.0.0.4-247</version>
   </parent>
 
   <properties>
     <!-- Kettle dependencies -->
-    <pdi.version>8.1.0.0-SNAPSHOT</pdi.version>
+    <kettle.version>8.0.0.4-247</kettle.version>
 
     <!-- Pentaho dependenceis -->
-    <platform.version>8.1.0.0-SNAPSHOT</platform.version>
-    <pentaho-json.version>8.1.0.0-SNAPSHOT</pentaho-json.version>
+    <pentaho-platform.version>8.0.0.4-247</pentaho-platform.version>
+    <json.version>8.0.0.4-247</json.version>
 
     <!-- Third party dependencies -->
     <slf4j-api.version>1.7.7</slf4j-api.version>
@@ -59,26 +59,26 @@
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
-      <version>${pdi.version}</version>
+      <version>${kettle.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
-      <version>${pdi.version}</version>
+      <version>${kettle.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-ui-swt</artifactId>
-      <version>${pdi.version}</version>
+      <version>${kettle.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <!-- Pentaho dependencies -->
     <dependency>
-      <groupId>org.pentaho</groupId>
-      <artifactId>commons-xul-core</artifactId>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-xul-core</artifactId>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -88,8 +88,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.pentaho</groupId>
-      <artifactId>commons-xul-swt</artifactId>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-xul-swt</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -100,13 +100,13 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-platform-core</artifactId>
-      <version>${platform.version}</version>
+      <version>${pentaho-platform.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-platform-api</artifactId>
-      <version>${platform.version}</version>
+      <version>${pentaho-platform.version}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -118,7 +118,7 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-platform-repository</artifactId>
-      <version>${platform.version}</version>
+      <version>${pentaho-platform.version}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -130,7 +130,7 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-platform-extensions</artifactId>
-      <version>${platform.version}</version>
+      <version>${pentaho-platform.version}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -142,7 +142,7 @@
     <dependency>
       <groupId>org.pentaho</groupId>
       <artifactId>json</artifactId>
-      <version>${pentaho-json.version}</version>
+      <version>${json.version}</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -355,7 +355,7 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-platform-repository</artifactId>
-      <version>${platform.version}</version>
+      <version>${pentaho-platform.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
       <exclusions>
@@ -368,7 +368,7 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-platform-core</artifactId>
-      <version>${platform.version}</version>
+      <version>${pentaho-platform.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
       <exclusions>

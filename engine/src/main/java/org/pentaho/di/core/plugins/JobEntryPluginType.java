@@ -78,6 +78,16 @@ public class JobEntryPluginType extends BasePluginType implements PluginTypeInte
     return pluginType;
   }
 
+  /**
+   * Let's put in code here to search for the step plugins..
+   */
+  public void searchPlugins() throws KettlePluginException {
+    registerNatives();
+    registerAnnotations();
+    registerPluginJars();
+    registerXmlPlugins();
+  }
+
   @Override
   protected String getXmlPluginFile() {
     return Const.XML_FILE_KETTLE_JOB_ENTRIES;
@@ -98,6 +108,14 @@ public class JobEntryPluginType extends BasePluginType implements PluginTypeInte
     return "job-entry";
   }
 
+  /**
+   * Scan & register internal job entry plugins
+   */
+  protected void registerAnnotations() throws KettlePluginException {
+    // This is no longer done because it was deemed too slow. Only jar files in the plugins/ folders are scanned for
+    // annotations.
+  }
+
   protected void registerXmlPlugins() throws KettlePluginException {
     for ( PluginFolderInterface folder : pluginFolders ) {
 
@@ -108,10 +126,10 @@ public class JobEntryPluginType extends BasePluginType implements PluginTypeInte
           try {
             Document document = XMLHandler.loadXMLFile( file );
             Node pluginNode = XMLHandler.getSubNode( document, "plugin" );
-            if ( pluginNode != null ) {
-              registerPluginFromXmlResource( pluginNode, KettleVFS.getFilename( file.getParent() ), this
-                .getClass(), false, file.getParent().getURL() );
-            }
+
+            registerPluginFromXmlResource(
+              pluginNode, KettleVFS.getFilename( file.getParent() ), this.getClass(), false, file
+                .getParent().getURL() );
           } catch ( Exception e ) {
             // We want to report this plugin.xml error, perhaps an XML typo or something like that...
             //

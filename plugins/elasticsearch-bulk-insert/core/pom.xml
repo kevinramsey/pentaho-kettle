@@ -6,17 +6,17 @@
   <parent>
     <groupId>org.pentaho.di.plugins</groupId>
     <artifactId>elasticsearch-bulk-insert</artifactId>
-    <version>8.1.0.0-SNAPSHOT</version>
+    <version>8.0.0.4-247</version>
   </parent>
 
   <artifactId>elasticsearch-bulk-insert-core</artifactId>
-  <version>8.1.0.0-SNAPSHOT</version>
+  <version>8.0.0.4-247</version>
 
   <name>PDI Elasticsearch Bulk Insert Plugin Core</name>
   <description>Elasticsearch Bulk Insert Plugin</description>
   
   <properties>
-    <pdi.version>8.1.0.0-SNAPSHOT</pdi.version>
+    <dependency.pentaho-kettle.version>8.0.0.4-247</dependency.pentaho-kettle.version>
     <build.revision>${project.version}</build.revision>
     <timestamp>${maven.build.timestamp}</timestamp>
     <build.description>${project.description}</build.description>
@@ -28,27 +28,21 @@
       <groupId>org.elasticsearch</groupId>
       <artifactId>elasticsearch</artifactId>
       <version>2.2.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>jackson-core</artifactId>
-          <groupId>com.fasterxml.jackson.core</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
-      <version>${pdi.version}</version>
+      <version>${dependency.pentaho-kettle.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
-      <version>${pdi.version}</version>
+      <version>${dependency.pentaho-kettle.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-ui-swt</artifactId>
-      <version>${pdi.version}</version>
+      <version>${dependency.pentaho-kettle.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.swt</groupId>
@@ -74,7 +68,7 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
       <classifier>tests</classifier>
-      <version>${pdi.version}</version>
+      <version>${dependency.pentaho-kettle.version}</version>
     </dependency>
   </dependencies>
   

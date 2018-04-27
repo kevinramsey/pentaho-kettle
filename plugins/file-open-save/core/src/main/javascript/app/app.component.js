@@ -606,7 +606,8 @@ define([
      * Calls the service for removing the file
      */
     function commitRemove() {
-      if (vm.file === null) {// delete folder from directory tree panel
+      if (vm.file === null) {// delete folder from directory tree panel\
+        console.log(vm.folder.objectId);
         dt.remove(vm.folder.objectId ? vm.folder.objectId.id : "", vm.folder.name, vm.folder.path, vm.folder.type)
           .then(function() {
             var parent = vm.folder;

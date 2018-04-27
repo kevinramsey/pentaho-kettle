@@ -23,6 +23,8 @@
 package org.pentaho.di.core.plugins;
 
 import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 import org.pentaho.di.core.Const;
@@ -74,6 +76,13 @@ public class DatabasePluginType extends BasePluginType implements PluginTypeInte
 
   @Override
   protected void registerXmlPlugins() throws KettlePluginException {
+  }
+
+  @Override
+  public void handlePluginAnnotation( Class<?> clazz, Annotation annotation, List<String> libraries,
+    boolean nativePluginType, URL pluginFolder ) throws KettlePluginException {
+    // TODO Auto-generated method stub
+    super.handlePluginAnnotation( clazz, annotation, libraries, nativePluginType, pluginFolder );
   }
 
   public String[] getNaturalCategoriesOrder() {

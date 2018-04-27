@@ -27,35 +27,31 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.pentaho.di.core.CheckResultInterface;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.KettleEnvironment;
-import org.pentaho.di.core.ProgressMonitorListener;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.gui.OverwritePrompter;
 import org.pentaho.di.core.gui.Point;
 import org.pentaho.di.core.listeners.ContentChangedListener;
-import org.pentaho.di.core.logging.TransLogTable;
 import org.pentaho.di.core.row.RowMeta;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.di.core.row.value.ValueMetaFactory;
 import org.pentaho.di.core.row.value.ValueMetaString;
 import org.pentaho.di.core.variables.VariableSpace;
-import org.pentaho.di.core.variables.Variables;
 import org.pentaho.di.metastore.DatabaseMetaStoreUtil;
 import org.pentaho.di.repository.ObjectRevision;
 import org.pentaho.di.repository.Repository;
 import org.pentaho.di.repository.RepositoryDirectory;
 import org.pentaho.di.repository.RepositoryDirectoryInterface;
-import org.pentaho.di.trans.step.StepMeta;
-import org.pentaho.di.trans.step.StepMetaInterface;
 import org.pentaho.di.trans.step.StepIOMeta;
+import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaChangeListenerInterface;
-import org.pentaho.di.trans.step.StepPartitioningMeta;
+import org.pentaho.di.trans.step.StepMetaInterface;
 import org.pentaho.di.trans.steps.datagrid.DataGridMeta;
+import org.pentaho.di.trans.steps.streamlookup.StreamLookupMeta;
 import org.pentaho.di.trans.steps.textfileoutput.TextFileOutputMeta;
 import org.pentaho.di.trans.steps.userdefinedjavaclass.StepDefinition;
 import org.pentaho.di.trans.steps.userdefinedjavaclass.UserDefinedJavaClassDef;
@@ -66,15 +62,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertSame;
@@ -83,6 +75,8 @@ import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -476,91 +470,6 @@ public class TransMetaTest {
   public void testTransWithOneStepIsConsideredUsed() throws Exception {
     TransMeta transMeta = new TransMeta( getClass().getResource( "one-step-trans.ktr" ).getPath() );
     assertEquals( 1, transMeta.getUsedSteps().size() );
-    Repository rep = mock( Repository.class );
-    ProgressMonitorListener monitor = mock( ProgressMonitorListener.class );
-    List<CheckResultInterface> remarks = new ArrayList<>();
-    IMetaStore metaStore = mock( IMetaStore.class );
-    transMeta.checkSteps( remarks, false, monitor, new Variables(), rep, metaStore );
-    assertEquals( 4, remarks.size() );
-    for ( CheckResultInterface remark : remarks ) {
-      assertEquals( CheckResultInterface.TYPE_RESULT_OK, remark.getType() );
-    }
-  }
-
-  @Test
-  public void testGetCacheVersion() throws Exception {
-    TransMeta transMeta = new TransMeta( getClass().getResource( "one-step-trans.ktr" ).getPath() );
-    int oldCacheVersion = transMeta.getCacheVersion();
-    transMeta.setSizeRowset( 10 );
-    int currCacheVersion = transMeta.getCacheVersion();
-    assertNotEquals( oldCacheVersion, currCacheVersion );
-  }
-
-  @Test
-  public void testGetCacheVersionWithIrrelevantParameters() throws Exception {
-    TransMeta transMeta = new TransMeta( getClass().getResource( "one-step-trans.ktr" ).getPath() );
-    int oldCacheVersion = transMeta.getCacheVersion();
-    int currCacheVersion;
-
-    transMeta.setSizeRowset( 1000 );
-    currCacheVersion = transMeta.getCacheVersion();
-    assertNotEquals( oldCacheVersion, currCacheVersion );
-
-    oldCacheVersion = currCacheVersion;
-
-    // scenarios that should not impact the cache version
-
-    // transformation description
-    transMeta.setDescription( "transformation description" );
-
-    // transformation status
-    transMeta.setTransstatus( 100 );
-
-    // transformation log table
-    transMeta.setTransLogTable( mock( TransLogTable.class ) );
-
-    // transformation created user
-    transMeta.setCreatedUser( "user" );
-
-    // transformation modified user
-    transMeta.setModifiedUser( "user" );
-
-    // transformation created date
-    transMeta.setCreatedDate( new Date() );
-
-    // transformation modified date
-    transMeta.setModifiedDate( new Date() );
-
-    // transformation is key private flag
-    transMeta.setPrivateKey( false );
-
-    // transformation attributes
-    Map<String, String> attributes = new HashMap<>();
-    attributes.put( "key", "value" );
-    transMeta.setAttributes( "group", attributes );
-
-    // step description
-    StepMeta stepMeta = transMeta.getStep( 0 );
-    stepMeta.setDescription( "stepDescription" );
-
-    // step position
-    stepMeta.setLocation( 10, 20 );
-    stepMeta.setLocation( new Point( 30, 40 ) );
-
-    // step type id
-    stepMeta.setStepID( "Dummy" );
-
-    // step is distributed flag
-    stepMeta.setDistributes( false );
-
-    // step copies
-    stepMeta.setCopies( 5 );
-
-    // step partitioning meta
-    stepMeta.setStepPartitioningMeta( mock( StepPartitioningMeta.class ) );
-
-    // assert that nothing impacted the cache version
-    assertEquals( oldCacheVersion, transMeta.getCacheVersion() );
   }
 
   @Test
@@ -613,17 +522,17 @@ public class TransMetaTest {
     StepMeta stepMeta3 = createStepMeta( "step3" );
     List<StepMeta> mainPrevSteps = new ArrayList<>();
     mainPrevSteps.add( stepMeta2 );
-    when( transMetaSpy.findPreviousSteps( stepMetaMain, true ) ).thenReturn( mainPrevSteps );
+    doReturn( mainPrevSteps ).when( transMetaSpy ).findPreviousSteps( stepMetaMain, true );
     when( transMetaSpy.findNrPrevSteps( stepMetaMain ) ).thenReturn( 1 );
     when( transMetaSpy.findPrevStep( stepMetaMain, 0 ) ).thenReturn( stepMeta2 );
     List<StepMeta> stepmeta2PrevSteps = new ArrayList<>();
     stepmeta2PrevSteps.add( stepMeta3 );
-    when( transMetaSpy.findPreviousSteps( stepMeta2, true ) ).thenReturn( stepmeta2PrevSteps );
+    doReturn( stepmeta2PrevSteps ).when( transMetaSpy ).findPreviousSteps( stepMeta2, true );
     when( transMetaSpy.findNrPrevSteps( stepMeta2 ) ).thenReturn( 1 );
     when( transMetaSpy.findPrevStep( stepMeta2, 0 ) ).thenReturn( stepMeta3 );
     List<StepMeta> stepmeta3PrevSteps = new ArrayList<>();
     stepmeta3PrevSteps.add( stepMetaMain );
-    when( transMetaSpy.findPreviousSteps( stepMeta3, true ) ).thenReturn( stepmeta3PrevSteps );
+    doReturn( stepmeta3PrevSteps ).when( transMetaSpy ).findPreviousSteps( stepMeta3, true );
     when( transMetaSpy.findNrPrevSteps( stepMeta3 ) ).thenReturn( 1 );
     when( transMetaSpy.findPrevStep( stepMeta3, 0 ) ).thenReturn( stepMetaMain );
     assertTrue( transMetaSpy.hasLoop( stepMetaMain ) );
@@ -647,6 +556,49 @@ public class TransMetaTest {
     when( transMetaSpy.findPrevStep( stepMeta4, 0 ) ).thenReturn( stepMeta3 );
     //check no StackOverflow error
     assertFalse( transMetaSpy.hasLoop( stepMetaMain ) );
+  }
+
+  @Test
+  public void testGetPreviousStepsWhenStreamLookupStepPassedShouldClearCacheAndCallFindPreviousStepsWithFalseParam() {
+    TransMeta transMeta = mock( TransMeta.class );
+    StepMeta stepMeta = new StepMeta( "stream_lookup_id", "stream_lookup_name", new StreamLookupMeta() );
+
+    List<StepMeta> expectedResult = new ArrayList<>(  );
+    List<StepMeta> invalidResult = new ArrayList<>(  );
+    expectedResult.add( new StepMeta( "correct_mock", "correct_mock", new TextFileOutputMeta() ) );
+    invalidResult.add( new StepMeta( "incorrect_mock", "incorrect_mock", new TextFileOutputMeta() ) );
+
+    doNothing().when( transMeta ).clearPreviousStepCache();
+    when( transMeta.findPreviousSteps( any( StepMeta.class ), eq( false ) ) ).thenReturn( expectedResult );
+    when( transMeta.findPreviousSteps( any( StepMeta.class ), eq( true ) ) ).thenReturn( invalidResult );
+    when( transMeta.getPreviousSteps( any() ) ).thenCallRealMethod();
+
+    List<StepMeta> actualResult = transMeta.getPreviousSteps( stepMeta );
+
+    verify( transMeta, times( 1 ) ).clearPreviousStepCache();
+    assertEquals( expectedResult, actualResult );
+  }
+
+  @Test
+  public void testGetPreviousStepsWhenNotStreamLookupStepPassedShouldCallFindPreviousStepsWithTrueParam() {
+    TransMeta transMeta = mock( TransMeta.class );
+    StepMeta stepMeta = new StepMeta( "not_stream_lookup_id", "not_stream_lookup_name", new TextFileOutputMeta() );
+
+    List<StepMeta> expectedResult = new ArrayList<>(  );
+    List<StepMeta> invalidResult = new ArrayList<>(  );
+    expectedResult.add( new StepMeta( "correct_mock", "correct_mock", new TextFileOutputMeta() ) );
+    invalidResult.add( new StepMeta( "incorrect_mock", "incorrect_mock", new TextFileOutputMeta() ) );
+
+    doNothing().when( transMeta ).clearPreviousStepCache();
+    when( transMeta.getPreviousSteps( any() ) ).thenCallRealMethod();
+    when( transMeta.findPreviousSteps( any( StepMeta.class ) ) ).thenCallRealMethod();
+    when( transMeta.findPreviousSteps( any( StepMeta.class ), eq( true ) ) ).thenReturn( expectedResult );
+    when( transMeta.findPreviousSteps( any( StepMeta.class ), eq( false ) ) ).thenReturn( invalidResult );
+
+    List<StepMeta> actualResult = transMeta.getPreviousSteps( stepMeta );
+
+    verify( transMeta, times( 0 ) ).clearPreviousStepCache();
+    assertEquals( expectedResult, actualResult );
   }
 
   private StepMeta createStepMeta( String name ) {

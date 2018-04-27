@@ -333,8 +333,6 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
 
   private boolean halting;
 
-  private boolean safeStopping;
-
   private boolean debug;
 
   private boolean pausing;
@@ -375,7 +373,6 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
   private StepMeta showTargetStreamsStep;
 
   Timer redrawTimer;
-  private ToolItem stopItem;
 
   public void setCurrentNote( NotePadMeta ni ) {
     this.ni = ni;
@@ -984,9 +981,9 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
         TransHopMeta hop = findHop( real.x, real.y );
         if ( hop != null ) {
           TransHopMeta before = (TransHopMeta) hop.clone();
-          hop.setEnabled( !hop.isEnabled() );
+          setHopEnabled( hop, !hop.isEnabled() );
           if ( hop.isEnabled() && transMeta.hasLoop( hop.getToStep() ) ) {
-            hop.setEnabled( false );
+            setHopEnabled( hop, false );
             MessageBox mb = new MessageBox( shell, SWT.OK | SWT.ICON_ERROR );
             mb.setMessage( BaseMessages.getString( PKG, "TransGraph.Dialog.HopCausesLoop.Message" ) );
             mb.setText( BaseMessages.getString( PKG, "TransGraph.Dialog.HopCausesLoop.Title" ) );
@@ -1821,42 +1818,6 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
         }
       } );
 
-      stopItem = new ToolItem( swtToolbar, SWT.DROP_DOWN, 2 );
-
-      stopItem.setImage( GUIResource.getInstance().getImage( "ui/images/stop.svg" ) );
-      stopItem.setToolTipText( BaseMessages.getString( PKG, "Spoon.Tooltip.StopTranformation" ) );
-      stopItem.addSelectionListener( new SelectionAdapter() {
-
-        @Override
-        public void widgetSelected( SelectionEvent e ) {
-          if ( e.detail == SWT.DROP_DOWN ) {
-            Menu menu = new Menu( shell, SWT.POP_UP );
-
-            MenuItem item1 = new MenuItem( menu, SWT.PUSH );
-            item1.setText( BaseMessages.getString( PKG, "Spoon.Menu.StopTranformation" ) );
-            item1.addSelectionListener( new SelectionAdapter() {
-              @Override
-              public void widgetSelected( SelectionEvent e1 ) {
-                stopTransformation();
-              }
-            } );
-
-            MenuItem item2 = new MenuItem( menu, SWT.PUSH );
-            item2.setText( BaseMessages.getString( PKG, "Spoon.Menu.SafeStopTranformation" ) );
-            item2.addSelectionListener( new SelectionAdapter() {
-              @Override
-              public void widgetSelected( SelectionEvent e2 ) {
-                safeStop();
-              }
-            } );
-            menu.setLocation( shell.getDisplay().map( mainComposite.getParent(), null, mainComposite.getLocation() ) );
-            menu.setVisible( true );
-          } else {
-            stopTransformation();
-          }
-        }
-      } );
-
       // Hack alert : more XUL limitations...
       // TODO: no longer a limitation use toolbaritem
       //
@@ -2420,9 +2381,9 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
     selectionRegion = null;
     TransHopMeta hi = getCurrentHop();
     TransHopMeta before = (TransHopMeta) hi.clone();
-    hi.setEnabled( !hi.isEnabled() );
+    setHopEnabled( hi, !hi.isEnabled() );
     if ( hi.isEnabled() && transMeta.hasLoop( hi.getToStep() ) ) {
-      hi.setEnabled( false );
+      setHopEnabled( hi, false );
       MessageBox mb = new MessageBox( shell, SWT.OK | SWT.ICON_ERROR );
       mb.setMessage( BaseMessages.getString( PKG, "TransGraph.Dialog.LoopAfterHopEnabled.Message" ) );
       mb.setText( BaseMessages.getString( PKG, "TransGraph.Dialog.LoopAfterHopEnabled.Title" ) );
@@ -2473,13 +2434,13 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
       if ( list.contains( hop.getFromStep() ) && list.contains( hop.getToStep() ) ) {
 
         TransHopMeta before = (TransHopMeta) hop.clone();
-        hop.setEnabled( enabled );
+        setHopEnabled( hop, enabled );
         TransHopMeta after = (TransHopMeta) hop.clone();
         spoon.addUndoChange( transMeta, new TransHopMeta[] { before }, new TransHopMeta[] { after },
           new int[] { transMeta.indexOfTransHop( hop ) } );
         if ( transMeta.hasLoop( hop.getToStep() ) ) {
           hasLoop = true;
-          hop.setEnabled( false );
+          setHopEnabled( hop, false );
         }
       }
     }
@@ -2508,7 +2469,7 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
     }
 
     TransHopMeta before = (TransHopMeta) currentHop.clone();
-    currentHop.setEnabled( enabled );
+    setHopEnabled( currentHop, enabled );
     TransHopMeta after = (TransHopMeta) currentHop.clone();
     spoon.addUndoChange( transMeta, new TransHopMeta[] { before }, new TransHopMeta[] { after }, new int[] { transMeta
       .indexOfTransHop( currentHop ) } );
@@ -2532,7 +2493,7 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
             .forEach( hop -> {
               if ( hop.isEnabled() != enabled ) {
                 TransHopMeta before = (TransHopMeta) hop.clone();
-                hop.setEnabled( enabled );
+                setHopEnabled( hop, enabled );
                 TransHopMeta after = (TransHopMeta) hop.clone();
                 spoon.addUndoChange( transMeta, new TransHopMeta[]{ before }, new TransHopMeta[]{ after }, new int[]{ transMeta
                         .indexOfTransHop( hop ) } );
@@ -4153,7 +4114,7 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
   }
 
   public void stop() {
-    if ( ( running && !halting ) || safeStopping ) {
+    if ( running && !halting ) {
       halting = true;
       trans.stopAll();
       log.logMinimal( BaseMessages.getString( PKG, "TransLog.Log.ProcessingOfTransformationStopped" ) );
@@ -4162,23 +4123,6 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
       initialized = false;
       halted = false;
       halting = false;
-      safeStopping = false;
-
-      setControlStates();
-
-      transMeta.setInternalKettleVariables(); // set the original vars back as they may be changed by a mapping
-    }
-  }
-
-  public void safeStop() {
-    if ( running && !halting ) {
-      halting = true;
-      safeStopping = true;
-      trans.safeStop();
-      log.logMinimal( BaseMessages.getString( PKG, "TransLog.Log.TransformationSafeStopped" ) );
-
-      initialized = false;
-      halted = false;
 
       setControlStates();
 
@@ -4256,8 +4200,11 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
 
         // Stop button...
         //
-        if ( !stopItem.isEnabled() ^ !running ) {
-          stopItem.setEnabled( running );
+        XulToolbarbutton stopButton = (XulToolbarbutton) toolbar.getElementById( "trans-stop" );
+        if ( stopButton != null && !controlDisposed( stopButton ) ) {
+          if ( stopButton.isDisabled() ^ !running ) {
+            stopButton.setDisabled( !running );
+          }
         }
 
         // Debug button...
@@ -4407,7 +4354,6 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
         initialized = false;
         halted = false;
         halting = false;
-        safeStopping = false;
 
         setControlStates();
 
@@ -5104,5 +5050,10 @@ public class TransGraph extends AbstractGraph implements XulEventHandler, Redraw
     } catch ( KettleException e ) {
       throw new RuntimeException( e );
     }
+  }
+
+  private void setHopEnabled( TransHopMeta hop, boolean enabled ) {
+    hop.setEnabled( enabled );
+    transMeta.clearCaches();
   }
 }

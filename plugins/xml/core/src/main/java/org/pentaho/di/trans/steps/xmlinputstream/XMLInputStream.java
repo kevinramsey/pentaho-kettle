@@ -27,6 +27,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;

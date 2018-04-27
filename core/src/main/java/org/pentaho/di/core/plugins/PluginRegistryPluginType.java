@@ -53,6 +53,28 @@ public class PluginRegistryPluginType extends BasePluginType implements PluginTy
   }
 
   @Override
+  protected void addExtraClasses( Map<Class<?>, String> classMap, Class<?> clazz, Annotation annotation ) {
+    // To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  private static class NativePlugin {
+    Class<?> clazz;
+    String id, name, desc;
+
+    public NativePlugin( Class<?> clazz, String id, String name, String desc ) {
+      this.clazz = clazz;
+      this.id = id;
+      this.desc = desc;
+    }
+  }
+
+  private static List<NativePlugin> natives = new ArrayList<NativePlugin>();
+
+  public static void registerNative( Class<?> clazz, String id, String name, String desc ) {
+    natives.add( new NativePlugin( clazz, id, name, desc ) );
+  }
+
+  @Override
   protected String getXmlPluginFile() {
     return Const.XML_FILE_KETTLE_REGISTRY_EXTENSIONS;
   }
@@ -75,28 +97,6 @@ public class PluginRegistryPluginType extends BasePluginType implements PluginTy
   @Override
   protected boolean isReturn() {
     return true;
-  }
-
-  @Override
-  protected void addExtraClasses( Map<Class<?>, String> classMap, Class<?> clazz, Annotation annotation ) {
-    // To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  private static class NativePlugin {
-    Class<?> clazz;
-    String id, name, desc;
-
-    public NativePlugin( Class<?> clazz, String id, String name, String desc ) {
-      this.clazz = clazz;
-      this.id = id;
-      this.desc = desc;
-    }
-  }
-
-  private static List<NativePlugin> natives = new ArrayList<NativePlugin>();
-
-  public static void registerNative( Class<?> clazz, String id, String name, String desc ) {
-    natives.add( new NativePlugin( clazz, id, name, desc ) );
   }
 
   @Override
