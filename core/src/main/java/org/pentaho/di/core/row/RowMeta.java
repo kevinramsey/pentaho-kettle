@@ -544,6 +544,7 @@ public class RowMeta implements RowMetaInterface {
           // but it makes no harm as they will put the same value,
           // because valueMetaList is defended from modifications by read lock
           cache.storeMapping( valueName, index );
+          needRealClone = null;
         }
       }
       if ( index == null ) {

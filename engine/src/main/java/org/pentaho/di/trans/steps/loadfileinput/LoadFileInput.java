@@ -65,8 +65,8 @@ public class LoadFileInput extends BaseStep implements StepInterface {
     super( stepMeta, stepDataInterface, copyNr, transMeta, trans );
   }
 
-  private void addFileToResultFilesname( FileObject file ) throws Exception {
-    if ( meta.addResultFile() ) {
+  private void addFileToResultFilesName( FileObject file ) throws Exception {
+    if ( meta.getAddResultFile() ) {
       // Add this to the result file names...
       ResultFile resultFile =
         new ResultFile( ResultFile.FILE_TYPE_GENERAL, file, getTransMeta().getName(), getStepname() );
@@ -77,7 +77,7 @@ public class LoadFileInput extends BaseStep implements StepInterface {
 
   boolean openNextFile() {
     try {
-      if ( meta.getIsInFields() ) {
+      if ( meta.getFileInFields() ) {
         data.readrow = getRow(); // Grab another row ...
 
         if ( data.readrow == null ) { // finished processing!
@@ -99,7 +99,7 @@ public class LoadFileInput extends BaseStep implements StepInterface {
           // All non binary content is handled as a String. It would be converted to the target type after the processing.
           data.convertRowMeta = data.outputRowMeta.cloneToType( ValueMetaInterface.TYPE_STRING );
 
-          if ( meta.getIsInFields() ) {
+          if ( meta.getFileInFields() ) {
             // Check is filename field is provided
             if ( Utils.isEmpty( meta.getDynamicFilenameField() ) ) {
               logError( BaseMessages.getString( PKG, "LoadFileInput.Log.NoField" ) );
@@ -131,20 +131,11 @@ public class LoadFileInput extends BaseStep implements StepInterface {
             PKG, "LoadFileInput.Log.Stream", meta.getDynamicFilenameField(), Fieldvalue ) );
         }
 
-        FileObject file = null;
         try {
           // Source is a file.
           data.file = KettleVFS.getFileObject( Fieldvalue );
         } catch ( Exception e ) {
           throw new KettleException( e );
-        } finally {
-          try {
-            if ( file != null ) {
-              file.close();
-            }
-          } catch ( Exception e ) {
-            // Ignore errors
-          }
         }
       } else {
         if ( data.filenr >= data.files.nrOfFiles() ) {
@@ -206,7 +197,7 @@ public class LoadFileInput extends BaseStep implements StepInterface {
         // get File content
         getFileContent();
 
-        addFileToResultFilesname( data.file );
+        addFileToResultFilesName( data.file );
 
         if ( isDetailed() ) {
           logDetailed( BaseMessages.getString( PKG, "LoadFileInput.Log.FileOpened", data.file.toString() ) );
@@ -340,7 +331,7 @@ public class LoadFileInput extends BaseStep implements StepInterface {
     try {
       // Create new row or clone
       if ( meta.getIsInFields() ) {
-        System.arraycopy( data.readrow, 0, outputRowData, 0, data.readrow.length );
+        outputRowData = data.readrow.clone();
       }
 
       // Read fields...
@@ -465,7 +456,7 @@ public class LoadFileInput extends BaseStep implements StepInterface {
       data.rownr++;
 
     } catch ( Exception e ) {
-      throw new KettleException( "Impossible de charger le fichier", e );
+      throw new KettleException( "Error during processing a row", e );
     }
 
     return outputRowData;

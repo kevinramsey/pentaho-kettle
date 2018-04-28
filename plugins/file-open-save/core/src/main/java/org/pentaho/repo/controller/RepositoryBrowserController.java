@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hitachi Vantara. All rights reserved.
+ * Copyright 2017-2018 Hitachi Vantara. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import org.pentaho.di.ui.core.PropsUI;
 import org.pentaho.di.ui.spoon.Spoon;
 import org.pentaho.repo.model.RepositoryDirectory;
 import org.pentaho.repo.model.RepositoryFile;
+import org.pentaho.repo.model.RepositoryName;
 import org.pentaho.repo.util.Util;
 
 import java.util.Calendar;
@@ -60,6 +61,7 @@ public class RepositoryBrowserController {
 
   public static final String TRANSFORMATION = "transformation";
   private Supplier<Spoon> spoonSupplier = Spoon::getInstance;
+  public static Repository repository;
 
   public boolean loadFile( String id, String type ) {
     try {
@@ -293,6 +295,9 @@ public class RepositoryBrowserController {
   }
 
   public RepositoryDirectory create( String parent, String name ) {
+    if ( hasDupeFolder( parent, name ) ) {
+      return null;
+    }
     try {
       RepositoryDirectoryInterface repositoryDirectoryInterface =
         getRepository().createRepositoryDirectory( getRepository().findDirectory( parent ), name );
@@ -307,8 +312,23 @@ public class RepositoryBrowserController {
     }
   }
 
+  /**Checks if there is a duplicate folder in a given directory (i.e. hidden folder)
+   * @param parent - Parent directory
+   * @param name - Name of folder
+   * @return - true if the parent directory has a folder equal to name, false otherwise
+   */
+  private boolean hasDupeFolder( String parent, String name ) {
+    try {
+      RepositoryDirectoryInterface rdi = getRepository().findDirectory( parent ).findChild( name );
+      return rdi != null;
+    } catch ( Exception e ) {
+      System.out.println( e );
+    }
+    return false;
+  }
+
   public boolean saveFile( String path, String name ) {
-    boolean result = checkSecurity();
+    boolean result = checkForSecurityOrDupeIssues( path, name );
     if ( result ) {
       try {
         RepositoryDirectoryInterface repositoryDirectoryInterface = getRepository().findDirectory( path );
@@ -328,6 +348,31 @@ public class RepositoryBrowserController {
       }
     }
     return result;
+  }
+
+  public boolean checkForSecurityOrDupeIssues( String path, String name ) {
+    return checkSecurity() && !hasDupeFile( path, name );
+  }
+
+  /**
+   * Checks if there is a duplicate file in a given directory (i.e. hidden file)
+   * @param path - Path to directory in which we are saving
+   * @param name - Name of file to save
+   * @return - true if a duplicate file is found, false otherwise
+   */
+  private boolean hasDupeFile( String path, String name ) {
+    try {
+      RepositoryDirectoryInterface repositoryDirectoryInterface = getRepository().findDirectory( path );
+      EngineMetaInterface meta = getSpoon().getActiveMeta();
+      RepositoryObjectType type = "Trans".equals( meta.getFileType() )
+        ? RepositoryObjectType.TRANSFORMATION : RepositoryObjectType.JOB;
+      if ( getRepository().exists( name, repositoryDirectoryInterface, type ) ) {
+        return true;
+      }
+    } catch ( Exception e ) {
+      System.out.println( e );
+    }
+    return false;
   }
 
   private boolean checkSecurity() {
@@ -355,9 +400,6 @@ public class RepositoryBrowserController {
           getRepository().getRepositoryMeta().getId().equals( "PentahoEnterpriseRepository" );
         int depth = isPentahoRepository ? -1 : 0;
         createRepositoryDirectory( repositoryDirectoryInterface, repositoryDirectories, depth, null, filter );
-        if ( isPentahoRepository ) {
-          repositoryDirectories.remove( 0 );
-        }
         return repositoryDirectories;
       } catch ( Exception e ) {
         return null;
@@ -487,10 +529,6 @@ public class RepositoryBrowserController {
     return spoonSupplier.get();
   }
 
-  private Repository getRepository() {
-    return getSpoon().rep;
-  }
-
   public LinkedList<String> getRecentSearches() {
     LinkedList<String> recentSearches = new LinkedList<String>();
     try {
@@ -544,5 +582,13 @@ public class RepositoryBrowserController {
     }
 
     return recentSearches;
+  }
+
+  public RepositoryName getCurrentRepo() {
+    return new RepositoryName( getRepository().getName() );
+  }
+
+  private Repository getRepository() {
+    return repository != null ? repository : spoonSupplier.get().rep;
   }
 }

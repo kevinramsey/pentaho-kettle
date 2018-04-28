@@ -27,6 +27,7 @@
  **/
 define([
   "angular",
+  "./app.config",
   "./app.component",
   "./components/card/card.component",
   "./components/folder/folder.component",
@@ -34,16 +35,18 @@ define([
   "./components/loading/loading.component",
   "./components/breadcrumb/breadcrumb.component",
   "./components/files/files.component",
+  "./components/search/search.component",
   "./shared/directives/edit.directive",
   "./shared/directives/key.directive",
   "./shared/directives/focus.directive",
   "./shared/directives/scrollToFolder.directive",
   "./components/breadcrumb/breadcrumb.directive",
   "./services/data.service",
-  "./shared/directives/resize/resize.module"
-], function(angular, appComponent, cardComponent, folderComponent, errorComponent, loadingComponent,
-            breadcrumbComponent, filesComponent, editDirective, keyDirective, focusDirective, scrollToFolderDirective,
-            breadcrumbDirective, dataService, resizeModule) {
+  "./shared/directives/resize/resize.module",
+  "angular-ui-router"
+], function(angular, appConfig, appComponent, cardComponent, folderComponent, errorComponent,
+            loadingComponent, breadcrumbComponent, filesComponent, searchComponent, editDirective, keyDirective,
+            focusDirective, scrollToFolderDirective, breadcrumbDirective, dataService, resizeModule) {
   "use strict";
 
   var module = {
@@ -61,20 +64,22 @@ define([
    * @private
    */
   function activate() {
-    angular.module(module.name, [resizeModule.name])
+    angular.module(module.name, [resizeModule.name, "ui.router"])
+      .component(loadingComponent.name, loadingComponent.options)
       .component(appComponent.name, appComponent.options)
       .component(cardComponent.name, cardComponent.options)
       .component(folderComponent.name, folderComponent.options)
       .component(errorComponent.name, errorComponent.options)
-      .component(loadingComponent.name, loadingComponent.options)
       .component(breadcrumbComponent.name, breadcrumbComponent.options)
       .component(filesComponent.name, filesComponent.options)
+      .component(searchComponent.name, searchComponent.options)
       .directive(editDirective.name, editDirective.options)
       .directive(keyDirective.name, keyDirective.options)
       .directive(focusDirective.name, focusDirective.options)
       .directive(breadcrumbDirective.name, breadcrumbDirective.options)
       .directive(scrollToFolderDirective.name, scrollToFolderDirective.options)
-      .service(dataService.name, dataService.factory);
+      .service(dataService.name, dataService.factory)
+      .config(appConfig);
   }
 
   /**

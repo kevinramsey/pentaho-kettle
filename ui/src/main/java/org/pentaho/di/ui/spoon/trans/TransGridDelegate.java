@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -23,6 +23,7 @@
 package org.pentaho.di.ui.spoon.trans;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -414,21 +415,39 @@ public class TransGridDelegate extends SpoonDelegate implements XulEventHandler 
           // Error lines should appear in red:
           if ( baseStep.getErrors() > 0 ) {
             ti.setBackground( GUIResource.getInstance().getColorRed() );
-          } else {
-            if ( nr % 2 == 0 ) {
-              ti.setBackground( GUIResource.getInstance().getColorWhite() );
-            } else {
-              ti.setBackground( GUIResource.getInstance().getColorBlueCustomGrid() );
-            }
           }
           nr++;
+
+          Collection<StepStatus> stepStatuses = baseStep.subStatuses();
+          int subIndex = 1;
+          for ( StepStatus status : stepStatuses ) {
+            String[] subFields = status.getTransLogFields( baseStep.getStatus().getDescription() );
+            subFields[1] = "     " + subFields[1];
+            TableItem subItem = new TableItem( table, SWT.NONE );
+            subItem.setText( 0, num + "." + subIndex++ );
+
+            for ( int f = 1; f < subFields.length; f++ ) {
+              subItem.setText( f, subFields[f] );
+            }
+          }
+        }
+      }
+
+      for ( int i = 0; i < table.getItems().length; i++ ) {
+        TableItem item = table.getItem( i );
+        item.setForeground( GUIResource.getInstance().getColorBlack() );
+        if ( !item.getBackground().equals( GUIResource.getInstance().getColorRed() ) ) {
+          item.setBackground(
+            i % 2 == 0
+              ? GUIResource.getInstance().getColorWhite()
+              : GUIResource.getInstance().getColorBlueCustomGrid() );
         }
       }
 
       // Only need to resort if the output has been sorted differently to the
       // default
       if ( table.getItemCount() > 0 && ( sortColumn != 0 || !sortDescending ) ) {
-        transGridView.sortTable( sortColumn, sortDescending );
+        transGridView.sortTable( sortColumn, sortDescending, false );
       }
 
       // if (updateRowNumbers) { transGridView.setRowNums(); }

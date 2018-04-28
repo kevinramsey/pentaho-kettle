@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hitachi Vantara. All rights reserved.
+ * Copyright 2017-2018 Hitachi Vantara. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -51,9 +50,14 @@ public class RepositoryBrowserEndpoint {
   @Path( "/loadDirectoryTree{filter : (/filter)?}" )
   @Produces( { MediaType.APPLICATION_JSON } )
   public Response loadDirectoryTree( @PathParam( "filter" ) String filter ) {
-    List<RepositoryDirectory> repositoryDirectories =
-      Utils.isEmpty( filter ) ? repositoryBrowserController.loadDirectoryTree() :
-        repositoryBrowserController.loadDirectoryTree( filter );
+    List<RepositoryDirectory> repositoryDirectories;
+    if ( filter.equals( "false" ) ) {
+      repositoryDirectories = repositoryBrowserController.loadDirectoryTree( null );
+    } else {
+      repositoryDirectories = Utils.isEmpty( filter ) ? repositoryBrowserController.loadDirectoryTree()
+        : repositoryBrowserController.loadDirectoryTree( filter );
+    }
+
     if ( repositoryDirectories != null ) {
       return Response.ok( repositoryDirectories ).build();
     }
@@ -99,6 +103,15 @@ public class RepositoryBrowserEndpoint {
       return Response.ok().build();
     }
 
+    return Response.noContent().build();
+  }
+
+  @GET
+  @Path( "/checkForSecurityOrDupeIssues/{path}/{name}" )
+  public Response checkForSecurityOrDupeIssues( @PathParam( "path" ) String path, @PathParam( "name" ) String name ) {
+    if ( repositoryBrowserController.checkForSecurityOrDupeIssues( path, name ) ) {
+      return Response.ok().build();
+    }
     return Response.noContent().build();
   }
 
@@ -167,12 +180,21 @@ public class RepositoryBrowserEndpoint {
   @GET
   @Path( "/recentSearches" )
   @Produces( { MediaType.APPLICATION_JSON } )
-  public Response recentSearches() { return Response.ok( repositoryBrowserController.getRecentSearches() ).build(); }
+  public Response recentSearches() {
+    return Response.ok( repositoryBrowserController.getRecentSearches() ).build();
+  }
 
   @GET
   @Path( "/storeRecentSearch/{recentSearch}" )
   @Produces( { MediaType.APPLICATION_JSON } )
   public Response storeRecentSearch( @PathParam( "recentSearch" ) String recentSearch ) {
     return Response.ok( repositoryBrowserController.storeRecentSearch( recentSearch ) ).build();
+  }
+
+  @GET
+  @Path( "/currentRepo" )
+  @Produces( { MediaType.APPLICATION_JSON } )
+  public Response getCurrentRepo() {
+    return Response.ok( repositoryBrowserController.getCurrentRepo() ).build();
   }
 }

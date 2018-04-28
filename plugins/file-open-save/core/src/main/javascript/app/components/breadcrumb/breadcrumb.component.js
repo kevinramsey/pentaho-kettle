@@ -38,8 +38,7 @@ define([
     bindings: {
       path: "<",
       includeRoot: "<",
-      onSelect: "&",
-      wrapperClass: "<"
+      onSelect: "&"
     },
     template: breadcrumbTemplate,
     controllerAs: "vm",
@@ -96,6 +95,9 @@ define([
         var parts = path.split("/");
         var set = [];
         if (vm.includeRoot && path !== "Recents") {
+          set.push({path: "/", part: "/"});
+        }
+        if (path === "/" && vm.includeRoot === false) {
           set.push({path: "/", part: "/"});
         }
         for (var i = 0; i < parts.length; i++) {

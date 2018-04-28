@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Hitachi Vantara. All rights reserved.
+ * Copyright 2017-2018 Hitachi Vantara. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,10 +51,12 @@ define(
           getRecentFiles: getRecentFiles,
           updateRecentFiles: updateRecentFiles,
           getRecentSearches: getRecentSearches,
+          getCurrentRepo: getCurrentRepo,
           storeRecentSearch: storeRecentSearch,
           openRecent: openRecent,
           openFile: openFile,
           saveFile: saveFile,
+          checkForSecurityOrDupeIssues: checkForSecurityOrDupeIssues,
           rename: rename,
           create: create,
           remove: remove
@@ -110,6 +112,17 @@ define(
         }
 
         /**
+         * Check for security issues or hidden duplicate files before saving
+         *
+         * @param {String} path - The path to which to save file
+         * @param {String} name - The file name
+         * @return {Promise} - a promise resolved once data is returned
+         */
+        function checkForSecurityOrDupeIssues(path, name) {
+          return _httpGet([baseUrl, "checkForSecurityOrDupeIssues", encodeURIComponent(path), name].join("/"));
+        }
+
+        /**
          * Returns the recent files for the connected repository
          *
          * @return {Promise} - a promise resolved once data is returned
@@ -128,6 +141,15 @@ define(
         function updateRecentFiles(oldPath, newPath) {
           return _httpGet([baseUrl, "updateRecentFiles", encodeURIComponent(oldPath),
             encodeURIComponent(newPath)].join("/"));
+        }
+
+        /*
+         * Returns the name of the current repo
+         *
+         * @return {Promise} - a promise resolved once data is returned
+         */
+        function getCurrentRepo() {
+          return _httpGet([baseUrl, "currentRepo"].join("/"));
         }
 
         /**

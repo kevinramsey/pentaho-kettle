@@ -3,7 +3,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -42,7 +42,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+
+import org.apache.commons.lang.StringUtils;
 import org.pentaho.di.core.BlockingRowSet;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.util.Utils;
@@ -263,6 +266,8 @@ public class BaseStep implements VariableSpace, StepInterface, LoggingObjectInte
 
   private AtomicBoolean stopped;
 
+  protected AtomicBoolean safeStopped;
+
   private AtomicBoolean paused;
 
   private boolean init;
@@ -467,6 +472,7 @@ public class BaseStep implements VariableSpace, StepInterface, LoggingObjectInte
 
     running = new AtomicBoolean( false );
     stopped = new AtomicBoolean( false );
+    safeStopped = new AtomicBoolean( false );
     paused = new AtomicBoolean( false );
 
     init = false;
@@ -1233,9 +1239,23 @@ public class BaseStep implements VariableSpace, StepInterface, LoggingObjectInte
    */
   @Override
   public void putRow( RowMetaInterface rowMeta, Object[] row ) throws KettleStepException {
+    if ( rowMeta != null ) {
+      String property = System.getProperties().getProperty( Const.ALLOW_EMPTY_FIELD_NAMES_AND_TYPES, "false" );
+      boolean allowEmpty = Boolean.parseBoolean( property );
+      if ( !allowEmpty ) {
+        // check row meta for empty field name (BACKLOG-18004)
+        for ( ValueMetaInterface vmi : rowMeta.getValueMetaList() ) {
+          if ( StringUtils.isBlank( vmi.getName() ) ) {
+            throw new KettleStepException( "Please set a field name for all field(s) that have 'null'." );
+          }
+          if ( vmi.getType() <= 0 ) {
+            throw new KettleStepException( "Please set a value for the missing field(s) type." );
+          }
+        }
+      }
+    }
     getRowHandler().putRow( rowMeta, row );
   }
-
 
   private void handlePutRow( RowMetaInterface rowMeta, Object[] row ) throws KettleStepException {
     // Are we pausing the step? If so, stall forever...
@@ -1251,7 +1271,7 @@ public class BaseStep implements VariableSpace, StepInterface, LoggingObjectInte
     // Right after the pause loop we have to check if this thread is stopped or
     // not.
     //
-    if ( stopped.get() ) {
+    if ( stopped.get() && !safeStopped.get() ) {
       if ( log.isDebug() ) {
         logDebug( BaseMessages.getString( PKG, "BaseStep.Log.StopPuttingARow" ) );
       }
@@ -1566,7 +1586,7 @@ public class BaseStep implements VariableSpace, StepInterface, LoggingObjectInte
     }
 
     while ( !rs.putRow( toBeSent, row ) ) {
-      if ( isStopped() ) {
+      if ( isStopped() && !safeStopped.get() ) {
         return;
       }
     }
@@ -1728,7 +1748,8 @@ public class BaseStep implements VariableSpace, StepInterface, LoggingObjectInte
    *
    * @return the row set
    */
-  private RowSet currentInputStream() {
+  @VisibleForTesting
+  RowSet currentInputStream() {
     return inputRowSets.get( currentInputRowSetNr );
   }
 
@@ -1931,12 +1952,7 @@ public class BaseStep implements VariableSpace, StepInterface, LoggingObjectInte
       // row compositions...
       //
       if ( trans.isSafeModeEnabled() ) {
-        safeModeChecking( inputRowSet.getRowMeta(), inputRowMeta ); // Extra
-        // checking
-        if ( row.length < inputRowMeta.size() ) {
-          throw new KettleException( "Safe mode check noticed that the length of the row data is smaller ("
-            + row.length + ") than the row metadata size (" + inputRowMeta.size() + ")" );
-        }
+        transMeta.checkRowMixingStatically( stepMeta, null );
       }
 
       for ( RowListener listener : rowListeners ) {
@@ -2941,6 +2957,10 @@ public class BaseStep implements VariableSpace, StepInterface, LoggingObjectInte
     this.stopped.set( stopped );
   }
 
+  @Override
+  public void setSafeStopped( boolean stopped ) {
+    this.safeStopped.set( stopped );
+  }
   /*
    * (non-Javadoc)
    *

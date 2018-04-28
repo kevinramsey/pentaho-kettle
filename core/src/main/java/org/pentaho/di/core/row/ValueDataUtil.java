@@ -47,12 +47,11 @@ import org.apache.commons.vfs2.provider.local.LocalFile;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.exception.KettleValueException;
 import org.pentaho.di.core.fileinput.CharsetToolkit;
+import org.pentaho.di.core.util.PentahoJaroWinklerDistance;
 import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.vfs.KettleVFS;
 import org.pentaho.di.core.xml.XMLCheck;
 
-import com.wcohen.ss.Jaro;
-import com.wcohen.ss.JaroWinkler;
 import com.wcohen.ss.NeedlemanWunsch;
 
 public class ValueDataUtil {
@@ -206,7 +205,9 @@ public class ValueDataUtil {
     if ( dataA == null || dataB == null ) {
       return null;
     }
-    return new Double( new Jaro().score( dataA.toString(), dataB.toString() ) );
+    PentahoJaroWinklerDistance pjwd = new PentahoJaroWinklerDistance();
+    pjwd.apply( dataA.toString(), dataB.toString() );
+    return pjwd.getJaroDistance();
   }
 
   /**
@@ -218,7 +219,9 @@ public class ValueDataUtil {
     if ( dataA == null || dataB == null ) {
       return null;
     }
-    return new Double( new JaroWinkler().score( dataA.toString(), dataB.toString() ) );
+    PentahoJaroWinklerDistance pjwd = new PentahoJaroWinklerDistance();
+    pjwd.apply( dataA.toString(), dataB.toString() );
+    return pjwd.getJaroWinklerDistance();
   }
 
   public static String get_Metaphone( ValueMetaInterface metaA, Object dataA ) {
@@ -1103,7 +1106,7 @@ public class ValueDataUtil {
 
     switch ( metaA.getType() ) {
       case ValueMetaInterface.TYPE_NUMBER:
-        return new Double( Math.IEEEremainder( metaA.getNumber( dataA ).doubleValue(), metaB.getNumber( dataB ).doubleValue() ) );
+        return new Double( metaA.getNumber( dataA ).doubleValue() % metaB.getNumber( dataB ).doubleValue() );
       case ValueMetaInterface.TYPE_INTEGER:
         return new Long( metaA.getInteger( dataA ) % metaB.getInteger( dataB ) );
       case ValueMetaInterface.TYPE_BIGNUMBER:

@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -36,6 +36,7 @@ import com.google.common.annotations.VisibleForTesting;
 import org.owasp.encoder.Encode;
 import org.pentaho.di.cluster.HttpUtil;
 import org.pentaho.di.core.Const;
+import org.pentaho.di.core.util.EnvUtil;
 import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.gui.Point;
@@ -323,9 +324,11 @@ public class GetTransStatusServlet extends BaseHttpServlet implements CartePlugi
         out.println( "<HEAD>" );
         out.println( "<TITLE>"
           + BaseMessages.getString( PKG, "TransStatusServlet.KettleTransStatus" ) + "</TITLE>" );
-        out.println( "<META http-equiv=\"Refresh\" content=\"10;url="
-          + convertContextPath( CONTEXT_PATH ) + "?name=" + URLEncoder.encode( transName, "UTF-8" ) + "&id="
-          + URLEncoder.encode( id, "UTF-8" ) + "\">" );
+        if ( EnvUtil.getSystemProperty( Const.KETTLE_CARTE_REFRESH_STATUS, "N" ).equalsIgnoreCase( "Y" ) ) {
+          out.println( "<META http-equiv=\"Refresh\" content=\"10;url="
+            + convertContextPath( CONTEXT_PATH ) + "?name=" + URLEncoder.encode( transName, "UTF-8" ) + "&id="
+            + URLEncoder.encode( id, "UTF-8" ) + "\">" );
+        }
         out.println( "<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">" );
         out.println( "</HEAD>" );
         out.println( "<BODY>" );
@@ -383,7 +386,11 @@ public class GetTransStatusServlet extends BaseHttpServlet implements CartePlugi
             out.print( "<a href=\""
               + convertContextPath( StopTransServlet.CONTEXT_PATH ) + "?name="
               + URLEncoder.encode( transName, "UTF-8" ) + "&id=" + URLEncoder.encode( id, "UTF-8" ) + "\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.StopTrans" ) + "</a>" );
+              + BaseMessages.getString( PKG, "TransStatusServlet.StopTrans" ) + "</a><br>" );
+            out.print( "<a href=\""
+              + convertContextPath( StopTransServlet.CONTEXT_PATH ) + "?name="
+              + URLEncoder.encode( transName, "UTF-8" ) + "&id=" + URLEncoder.encode( id, "UTF-8" ) + "&inputOnly=Y" + "\">"
+              + BaseMessages.getString( PKG, "TransStatusServlet.SafeStopTrans" ) + "</a>" );
             out.print( "<p>" );
           }
           out.print( "<a href=\""

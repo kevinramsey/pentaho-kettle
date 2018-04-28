@@ -1,7 +1,7 @@
 /*!
  * HITACHI VANTARA PROPRIETARY AND CONFIDENTIAL
  *
- * Copyright 2017 Hitachi Vantara. All rights reserved.
+ * Copyright 2017-2018 Hitachi Vantara. All rights reserved.
  *
  * NOTICE: All information including source code contained herein is, and
  * remains the sole property of Hitachi Vantara and its licensors. The intellectual
@@ -45,7 +45,7 @@ define([
     controller: appController
   };
 
-  appController.$inject = [dataService.name, "$location", "$scope", "$timeout"];
+  appController.$inject = [dataService.name, "$location", "$scope", "$timeout", "$state"];
 
   /**
    * The App Controller.
@@ -57,7 +57,7 @@ define([
    * @param {Object} $scope - Application model
    * @param {Object} $timeout - Angular wrapper around window.setTimeout
    */
-  function appController(dt, $location, $scope, $timeout) {
+  function appController(dt, $location, $scope, $timeout, $state) {
     var vm = this;
     vm.$onInit = onInit;
     vm.selectFolder = selectFolder;
@@ -68,28 +68,32 @@ define([
     vm.addFolder = addFolder;
     vm.openClicked = openClicked;
     vm.saveClicked = saveClicked;
+    vm.okClicked = okClicked;
     vm.cancel = cancel;
     vm.highlightFile = highlightFile;
     vm.remove = remove;
-    vm.setState = setState;
     vm.confirmError = confirmError;
     vm.cancelError = cancelError;
     vm.storeRecentSearch = storeRecentSearch;
     vm.updateDirectories = updateDirectories;
     vm.renameError = renameError;
-    vm.displayRecentSearches = displayRecentSearches;
-    vm.focusSearchBox = focusSearchBox;
-    vm.setTooltip = setTooltip;
     vm.recentsHasScrollBar = recentsHasScrollBar;
-    vm.addDeleteDisabled = addDeleteDisabled;
+    vm.addDisabled = addDisabled;
+    vm.deleteDisabled = deleteDisabled;
     vm.onKeyUp = onKeyUp;
     vm.getPlaceholder = getPlaceholder;
+    vm.isPentahoRepo = isPentahoRepo;
+    vm.getSelectedFolderName = getSelectedFolderName;
+    vm.isSaveEnabled = isSaveEnabled;
+    vm.isShowRecents = isShowRecents;
+    vm.currentRepo = "";
     vm.selectedFolder = "";
     vm.fileToSave = "";
-    vm.searchString = "";
     vm.showError = false;
     vm.errorType = 0;
     vm.loading = true;
+    vm.state = $state;
+    var globalSearch = false;
 
     /**
      * The $onInit hook of components lifecycle which is called on each controller
@@ -97,18 +101,16 @@ define([
      * bindings initialized. We use this hook to put initialization code for our controller.
      */
     function onInit() {
-      vm.wrapperClass = "save";
-      vm.headerTitle = i18n.get("file-open-save-plugin.app.header.save.title");
       vm.searchPlaceholder = i18n.get("file-open-save-plugin.app.header.search.placeholder");
       vm.saveFileNameLabel = i18n.get("file-open-save-plugin.app.save.file-name.label");
       vm.openButton = i18n.get("file-open-save-plugin.app.open.button");
       vm.cancelButton = i18n.get("file-open-save-plugin.app.cancel.button");
       vm.saveButton = i18n.get("file-open-save-plugin.app.save.button");
+      vm.okButton = i18n.get("file-open-save-plugin.app.ok.button");
       vm.confirmButton = i18n.get("file-open-save-plugin.app.save.button");
       vm.saveFileNameLabel = i18n.get("file-open-save-plugin.app.save.file-name.label");
       vm.addFolderText = i18n.get("file-open-save-plugin.app.add-folder.button");
       vm.removeText = i18n.get("file-open-save-plugin.app.delete.button");
-      vm.isInSearch = false;
       vm.showRecents = true;
       vm.folder = {name: "Recents", path: "Recents"};
       vm.selectedFolder = vm.folder.name;
@@ -116,16 +118,29 @@ define([
       vm.includeRoot = false;
       vm.autoExpand = false;
       vm.didDeleteFolder = false;
+      vm.searchString = "";
       _resetFileAreaMessage();
-      dt.getDirectoryTree($location.search().filter).then(_populateTree);
-      dt.getRecentFiles().then(_populateRecentFiles);
-      dt.getRecentSearches().then(_populateRecentSearches);
 
-      var state = $location.search().state;
+      vm.filename = $location.search().filename;
       vm.origin = $location.search().origin;
-      if (state) {
-        vm.setState(state);
-      }
+      $timeout(function() {
+        if ($state.is('open')) {
+          vm.headerTitle = i18n.get("file-open-save-plugin.app.header.open.title");
+        }
+        if ($state.is('save')) {
+          vm.headerTitle = i18n.get("file-open-save-plugin.app.header.save.title");
+        }
+        if ($state.is('selectFolder')) {
+          vm.headerTitle = i18n.get("file-open-save-plugin.app.header.select.title");
+        }
+        if (!$state.is('selectFolder')) {
+          dt.getDirectoryTree($location.search().filter).then(_populateTree);
+          dt.getRecentFiles().then(_populateRecentFiles);
+        } else {
+          dt.getDirectoryTree("false").then(_populateTree);
+        }
+        dt.getRecentSearches().then(_populateRecentSearches);
+      });
     }
 
     /**
@@ -145,12 +160,33 @@ define([
       if (path) {
         selectFolderByPath(path);
         vm.autoExpand = true;
+      } else {
+        if ($state.is('selectFolder')) {
+          if (isPentahoRepo()) {
+            selectFolderByPath("/home");
+          } else {
+            selectFolderByPath("/");
+          }
+        }
       }
-      if (vm.folders[0].path === "/") {
+      if (vm.folders[0].path === "/" && !isPentahoRepo()) {
         vm.includeRoot = true;
       }
-      vm.loading = false;
+      dt.getCurrentRepo().then(function(response) {
+        vm.currentRepo = response.data.name;
+        vm.loading = false;
+      });
       _setFileToSaveName();
+    }
+
+    /**
+     * Determines whether or no this is a pentaho repository
+     *
+     * @returns {boolean}
+     * @private
+     */
+    function isPentahoRepo() {
+      return vm.folders.length >= 3 && vm.folders[1].path === "/home";
     }
 
     /**
@@ -161,22 +197,6 @@ define([
      */
     function _populateRecentFiles(response) {
       vm.recentFiles = response.data;
-    }
-
-    /**
-     * Sets the wrapper class, title, and open/save button according to open or save option
-     *
-     * @param {String} state - "open" or "save" state
-     */
-    function setState(state) {
-      if (state === "open") {
-        vm.wrapperClass = "open";
-        vm.headerTitle = i18n.get("file-open-save-plugin.app.header.open.title");
-      }
-      if (state === "save") {
-        vm.wrapperClass = "save";
-        vm.headerTitle = i18n.get("file-open-save-plugin.app.header.save.title");
-      }
     }
 
     /**
@@ -193,12 +213,16 @@ define([
      * @private
      */
     function _setFileToSaveName() {
-      if (vm.wrapperClass === "save") {
-        dt.getActiveFileName().then(function(response) {
-          vm.fileToSave = response.data.fileName;
-        }, function() {
-          vm.fileToSave = "";
-        });
+      if ($state.is("save")) {
+        if (vm.filename != undefined) {
+          vm.fileToSave = vm.filename;
+        } else {
+          dt.getActiveFileName().then(function (response) {
+            vm.fileToSave = response.data.fileName;
+          }, function () {
+            vm.fileToSave = "";
+          });
+        }
       }
     }
 
@@ -208,14 +232,18 @@ define([
      * @param {Object} folder - folder object
      */
     function selectFolder(folder) {
-      vm.searchString = "";
+      if ((folder === null && vm.searchString !== "")
+          || (folder !== null && folder.name !== "/" && vm.searchString !== "")
+          || (folder !== null && folder.name === "/" && !isPentahoRepo() && vm.searchString !== "")) {
+        resetSearch();
+      }
       _resetFileAreaMessage();
       vm.file = null;
       if (folder) {
         vm.showRecents = false;
         vm.folder = folder;
         vm.selectedFolder = ((vm.folder.name === "home" || vm.folder.name === "public") && vm.folder.parent === "/") ?
-          _capsFirstLetter(folder.name) : folder.name;
+            _capsFirstLetter(folder.name) : folder.name;
       } else {
         vm.showRecents = true;
         vm.folder = {name: "Recents", path: "Recents"};
@@ -244,8 +272,9 @@ define([
      */
     function selectFile(file) {
       if (file.type === "folder") {
+        vm.searchString = "";
         selectFolder(file);
-      } else if (vm.wrapperClass === "open") {
+      } else if ($state.is("open")) {
         _open(file);
       }
     }
@@ -253,15 +282,24 @@ define([
     /**
      * Calls a filter for either recent files or files/folders in current folder
      */
-    function doSearch() {
+    function doSearch(searchValue) {
+      vm.searchString = searchValue;
       vm.isInSearch = false;
       vm.showMessage = true;
       if (vm.showRecents === true) {
-        _filter(vm.recentFiles, vm.searchString);
-      } else {
-        _filter(vm.folder.children, vm.searchString);
+        vm.showRecents = false;
+        selectFolder(vm.folders[0]);
+        globalSearch = true;
       }
+      _filter(vm.folder.children, vm.searchString);
       _setFileAreaMessage();
+      if (isPentahoRepo() && vm.searchString === "" && vm.selectedFolder === "/") {
+        vm.showRecents = true;
+        vm.folder = {name: "Recents", path: "Recents"};
+        vm.selectedFolder = vm.folder.name;
+      } else if (vm.searchString === "") {
+        _resetFileAreaMessage();
+      }
     }
 
     /**
@@ -270,8 +308,13 @@ define([
     function resetSearch() {
       if (vm.searchString !== "") {
         vm.searchString = "";
-        vm.doSearch();
+        vm.doSearch("");
         _resetFileAreaMessage();
+        if (isPentahoRepo()) {
+          vm.showRecents = true;
+          vm.folder = {name: "Recents", path: "Recents"};
+          vm.selectedFolder = vm.folder.name;
+        }
       } else {
         vm.focusSearchBox();
       }
@@ -333,6 +376,7 @@ define([
      */
     function openClicked() {
       if (vm.file && vm.file.type === "folder") {
+        vm.searchString = "";
         selectFolder(vm.file);
       } else {
         _open(vm.file);
@@ -383,7 +427,13 @@ define([
     function _save(override) {
       if (!_isDuplicate() || override) {
         try {
-          select("", vm.fileToSave, vm.folder.path, "");
+          dt.checkForSecurityOrDupeIssues(vm.folder.path, vm.fileToSave).then(function(response) {
+            if (response.status === 200) {
+              select("", vm.fileToSave, vm.folder.path, "");
+            } else {
+              _triggerError(3);
+            }
+          });
         } catch (e) {
           dt.saveFile(vm.folder.path, vm.fileToSave).then(function(response) {
             if (response.status === 200) {
@@ -396,6 +446,10 @@ define([
       } else {
         _triggerError(1);
       }
+    }
+
+    function okClicked() {
+      select(vm.file.objectId.id, vm.file.name, vm.file.path, vm.file.type);
     }
 
     /**
@@ -481,45 +535,57 @@ define([
      * Stores the most recent search
      */
     function storeRecentSearch() {
-      vm.isInSearch = false;
       if (vm.searchString !== "") {
-        dt.storeRecentSearch(vm.searchString).then(_populateRecentSearches);
+        if (vm.recentSearches.indexOf(vm.searchString) === -1) {
+          vm.recentSearches.push(vm.searchString);
+          dt.storeRecentSearch(vm.searchString).then(_populateRecentSearches);
+        }
       }
     }
 
     /**
-     * Determines if there are recent searches to show
+     * Determines if add button is to be disabled
+     * @return {boolean} - True if no folder is selected or if Recents is selected, false otherwise
      */
-    function displayRecentSearches() {
-      if (vm.recentSearches.length !== 0) {
-        vm.isInSearch = true;
-      }
+    function addDisabled() {
+      return addDeleteDisabled() || vm.searchString !== "";
+    }
+
+    /**
+     * Determines if delete button is to be disabled
+     * @return {boolean} - True if no folder is selected, if Recents is selected,
+     * or if root folder/file is selected, false otherwise
+     */
+    function deleteDisabled() {
+      return addDeleteDisabled() || isRoot();
     }
 
     /**
      * Determines if add or delete button is to be disabled
-     * @return {boolean} - True if no folder is selected or if Recents is selected, false otherwise
+     * @return {boolean} - True if no folder is selected, if Recents is selected, or if a message is showing.
+     * False otherwise
      */
     function addDeleteDisabled() {
-      return (vm.folder === null || vm.folder.path === "Recents");
+      return (vm.folder === null || vm.folder.path === "Recents" || vm.showMessage);
     }
 
     /**
-     * Sets focus on the search box
+     * Determines if (selected folder is a root folder according to repository type AND if no file is selected) OR
+     * if the selected file is a root folder
+     * @return {boolean} - True if root folder is selected and no file is selected, false otherwise
      */
-    function focusSearchBox() {
-      document.getElementById("searchBoxId").focus();
-    }
-
-    /**
-     * Sets the tooltip of a recent search in the search dropdown if it is wider than its container
-     * @param {String} id - the suffix of an element id
-     * @param {String} tooltip - the tooltip to add if necessary
-     */
-    function setTooltip(id, tooltip) {
-      if (utils.getTextWidth(tooltip) - 1 > 247) {
-        document.getElementById("search-item-index-" + id).title = tooltip;
+    function isRoot() {
+      var isFileNull = vm.file === null;
+      if (isPentahoRepo()) {
+        if (isFileNull) {
+          return vm.folder.path === "/home" || vm.folder.path === "/home/admin" || vm.folder.path === "/";
+        }
+        return vm.file.type === "folder" && (vm.file.path === "/home" || vm.file.path === "/home/admin");
       }
+      if (isFileNull) {
+        return vm.folder.path === "/";
+      }
+      return vm.file.type === "folder" && vm.file.path === "/";
     }
 
     /**
@@ -734,6 +800,7 @@ define([
 
     /**
      * Checks to see if the user has entered a file to save the same as a file already in current directory
+     * NOTE: does not check for hidden files. That is done in the checkForSecurityOrDupeIssues rest call
      * @return {boolean} - true if duplicate, false otherwise
      * @private
      */
@@ -756,11 +823,11 @@ define([
      */
     function onKeyUp(event) {
       if (event.keyCode === 13 && event.target.id !== "searchBoxId") {
-        if (vm.wrapperClass === "open") {
+        if ($state.is("open")) {
           if (vm.file !== null) {
             selectFile(vm.file);
           }
-        } else {
+        } else if (!vm.showRecents) {
           _save(false);
         }
       }
@@ -777,7 +844,12 @@ define([
      */
     function getPlaceholder() {
       var isIE = navigator.userAgent.indexOf("Trident") !== -1 && Boolean(document.documentMode);
-      var retVal = vm.searchPlaceholder + " " + vm.selectedFolder;
+      var retVal = vm.searchPlaceholder;
+      if (vm.folder.path !== "Recents") {
+        retVal += " " + vm.selectedFolder;
+      } else {
+        retVal += " " + vm.currentRepo;
+      }
       if (isIE && utils.getTextWidth(retVal) > 210) {
         var tmp = "";
         for (var i = 0; i < retVal.length; i++) {
@@ -799,6 +871,46 @@ define([
     */
     function _capsFirstLetter(input) {
       return input.charAt(0).toUpperCase() + input.slice(1);
+    }
+
+    /**
+     * Returns the name of the selected folder
+     *
+     * @return {String} - "Search results in "<The name of the selected folder>", truncating with ellipsis accordingly
+     */
+    function getSelectedFolderName() {
+      var retVal = i18n.get("file-open-save-plugin.app.search-results-in.label");
+      if (vm.selectedFolder === "/" && isPentahoRepo()) {
+        retVal += "\"" + vm.currentRepo;
+      } else {
+        retVal += "\"" + vm.selectedFolder;
+      }
+      if ($state.is("open") && utils.getTextWidth(retVal) > 435) {
+        retVal = utils.truncateString(retVal, 426) + "...";
+      } else if ($state.is("save") && utils.getTextWidth(retVal) > 395) {
+        retVal = utils.truncateString(retVal, 386) + "...";
+      }
+      return retVal + "\"";
+    }
+
+    /**
+     * Returns whether or not the save button should be enabled
+     *
+     * @returns {boolean} - true if the save button should be enabled
+     */
+    function isSaveEnabled() {
+      return vm.fileToSave === '' || vm.folder.path === 'Recents';
+    }
+
+    /**
+     * Returns whether or not the recents panel should be shown
+     *
+     * @returns {boolean} - true if recents should be shown
+     */
+    function isShowRecents() {
+      if (vm.recentFiles) {
+        return !vm.showMessage && vm.showRecents && vm.recentFiles.length > 0 && !$state.is('selectFolder');
+      }
     }
   }
 

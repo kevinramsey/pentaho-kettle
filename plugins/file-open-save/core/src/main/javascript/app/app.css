@@ -75,101 +75,6 @@ file-open-save-app .headerTitle {
   float: left;
   color: #333;
 }
-
-file-open-save-app .headerSearch {
-  width: 270px;
-  height: 34px;
-  float: right;
-  border: 1px solid #CCC;
-  border-radius: 4px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-}
-
-file-open-save-app .headerSearchLeft {
-  width: 16px;
-  height: 100%;
-  border: none;
-  cursor: text;
-  float: left;
-  margin-left: 8px;
-}
-
-file-open-save-app .headerSearchLeftIcon {
-  background: url("./img/search_field.svg") no-repeat right center;
-  width: 30px;
-  height: 100%;
-}
-
-file-open-save-app .headerSearchLeft.blueState .headerSearchLeftIcon {
-  background-position: right 16px center;
-}
-
-file-open-save-app .headerSearchRight {
-  width: 12px;
-  height: 12px;
-  border: none;
-  cursor: pointer;
-  float: left;
-  margin: 11px 10px 11px 8px;
-}
-
-file-open-save-app .headerSearchRightInvisible {
-  cursor: text;
-  visibility: hidden;
-}
-
-file-open-save-app .headerSearchRightIcon {
-  background: url("./img/clear_field.svg") no-repeat left center;
-  width: 12px;
-  height: 100%;
-}
-
-file-open-save-app .headerSearchRight:hover .headerSearchRightIcon {
-  background-position: right center;
-}
-
-file-open-save-app input.searchBox,
-file-open-save-app input.searchBox:focus {
-  width: 216px;
-  height: 100%;
-  border: none;
-  padding: 0 0 0 6px;
-  float: left;
-}
-
-/*HIDES THE X ON THE SEARCHBOX ON IE11*/
-file-open-save-app input.searchBox::-ms-clear {
-  display: none;
-  width:0;
-  height:0;
-}
-/*HIDES THE X ON THE SEARCHBOX ON IE11*/
-
-/*CHANGES THE COLOR OF THE PLACEHOLDER ON DIFFERENT BROWSERS*/
-file-open-save-app input.searchBox::-webkit-input-placeholder {
-  color: #999999;
-}
-
-file-open-save-app input.searchBox:-ms-input-placeholder {
-  color: #999999;
-}
-
-file-open-save-app input.searchBox::-moz-placeholder {
-  color: #999999;
-}
-
-file-open-save-app input.searchBox:focus::-webkit-input-placeholder {
-  color: #CCCCCC;
-}
-
-file-open-save-app input.searchBox:focus:-ms-input-placeholder {
-  color: #CCCCCC;
-}
-
-file-open-save-app input.searchBox:focus::-moz-placeholder {
-  color: #CCCCCC;
-}
 /*CHANGES THE COLOR OF THE PLACEHOLDER ON DIFFERENT BROWSERS*/
 
 file-open-save-app .headerBottom {
@@ -183,7 +88,6 @@ file-open-save-app .breadcrumbSection {
 }
 
 file-open-save-app .addDelete {
-  display: none;
   float: right;
 }
 
@@ -196,10 +100,6 @@ file-open-save-app .addDelete button {
 
 file-open-save-app .addDelete button:disabled {
   cursor: default;
-}
-
-file-open-save-app .save .addDelete {
-  display: inline;
 }
 
 file-open-save-app .addFolder {
@@ -246,7 +146,8 @@ file-open-save-app .middle {
   border-bottom: 1px solid #CCC;
 }
 
-file-open-save-app .open .middle {
+file-open-save-app .open .middle,
+file-open-save-app .selectFolder .middle {
   bottom: 96px;
 }
 
@@ -289,7 +190,8 @@ file-open-save-app .bottom {
   height: 119px;
 }
 
-file-open-save-app .open .bottom {
+file-open-save-app .open .bottom,
+file-open-save-app .selectFolder .bottom {
   padding-top: 30px;
   height: 36px;
 }
@@ -331,6 +233,10 @@ file-open-save-app button {
   outline: 0 none;
 }
 
+file-open-save-app button span {
+  position: relative;
+}
+
 file-open-save-app button.primary:enabled {
   border: 1px solid #005DA6;
   background-color: #005DA6;
@@ -364,10 +270,6 @@ file-open-save-app button.secondary:hover {
 file-open-save-app .buttons button {
   margin-left: 10px;
   float: right;
-}
-
-file-open-save-app .open .fileNameEntry {
-  display: none;
 }
 
 file-open-save-app .fileAreaMessageView {

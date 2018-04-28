@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -35,6 +35,9 @@ import java.util.concurrent.Callable;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang.BooleanUtils;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.i18n.BaseMessages;
@@ -42,7 +45,6 @@ import org.pentaho.di.repository.ObjectId;
 import org.pentaho.di.repository.Repository;
 import org.pentaho.di.repository.RepositoryDirectoryInterface;
 import org.pentaho.di.repository.RepositoryExtended;
-import org.pentaho.di.ui.core.dialog.ErrorDialog;
 import org.pentaho.di.ui.repository.repositoryexplorer.ContextChangeVetoer;
 import org.pentaho.di.ui.repository.repositoryexplorer.ContextChangeVetoer.TYPE;
 import org.pentaho.di.ui.repository.repositoryexplorer.ContextChangeVetoerCollection;
@@ -115,6 +117,8 @@ public class BrowseController extends AbstractXulEventHandler implements IUISupp
   protected XulConfirmBox confirmBox;
 
   private Shell shell;
+
+  private static final int DIALOG_WIDTH = 357, DIALOG_HEIGHT = 165, DIALOG_COLOR = SWT.COLOR_WHITE;
 
   /**
    * Allows for lookup of a UIRepositoryDirectory by ObjectId. This allows the reuse of instances that are inside a UI
@@ -369,33 +373,71 @@ public class BrowseController extends AbstractXulEventHandler implements IUISupp
   }
 
   protected void confirm( String title, String message, final Callable<Void> onAccept ) throws XulException {
-    confirmBox = (XulConfirmBox) document.createElement( "confirmbox" );
-    confirmBox.setTitle( BaseMessages.getString( PKG, title ) );
-    confirmBox.setMessage( BaseMessages.getString( PKG, message ) );
-    confirmBox.setAcceptLabel( BaseMessages.getString( PKG, "Dialog.Ok" ) );
-    confirmBox.setCancelLabel( BaseMessages.getString( PKG, "Dialog.Cancel" ) );
-    confirmBox.addDialogCallback( new XulDialogCallback<Object>() {
+    String yes = BaseMessages.getString( PKG, "Dialog.YesDelete" );
+    String no = BaseMessages.getString( PKG, "Dialog.No" );
+    try {
+      confirmDialog( onAccept, BaseMessages.getString( PKG, title ), BaseMessages.getString( PKG, message ), yes, no );
+    } catch ( Exception e ) {
+      throw new XulException( e );
+    }
+  }
 
-      public void onClose( XulComponent sender, Status returnCode, Object retVal ) {
-        if ( returnCode == Status.ACCEPT ) {
-          try {
-            onAccept.call();
-          } catch ( Exception e ) {
-            if ( mainController == null || !mainController.handleLostRepository( e ) ) {
-              messageBox.setTitle( BaseMessages.getString( PKG, "Dialog.Error" ) );
-              messageBox.setAcceptLabel( BaseMessages.getString( PKG, "Dialog.Ok" ) );
-              messageBox.setMessage( BaseMessages.getString( PKG, e.getLocalizedMessage() ) );
-              messageBox.open();
-            }
-          }
+  protected void confirm( String title, String message ) throws XulException {
+    String ok = BaseMessages.getString( PKG, "Dialog.Ok" );
+    try {
+      confirmDialog( title, message, ok );
+    } catch ( Exception e ) {
+      throw new XulException( e );
+    }
+  }
+
+  protected void confirmDialog( String title, String msg, String ok ) throws Exception {
+    MessageDialog confirmDialog =
+      new MessageDialog( getShell(), title, null, msg, MessageDialog.NONE, new String[] { ok }, 0 ) {
+        @Override
+        protected Point getInitialSize() {
+          return new Point( DIALOG_WIDTH, DIALOG_HEIGHT );
+        }
+
+        @Override
+        protected void configureShell( Shell shell ) {
+          super.configureShell( shell );
+          shell.setBackground( shell.getDisplay().getSystemColor( DIALOG_COLOR ) );
+          shell.setBackgroundMode( SWT.INHERIT_FORCE );
+        }
+      };
+    confirmDialog.open();
+  }
+
+  protected void confirmDialog( Callable<Void> callback, String title, String msg, String yes, String no )
+    throws Exception {
+    MessageDialog confirmDialog =
+      new MessageDialog( getShell(), title, null, msg, MessageDialog.NONE, new String[] { yes, no }, 0 ) {
+        @Override
+        protected Point getInitialSize() {
+          return new Point( DIALOG_WIDTH, DIALOG_HEIGHT );
+        }
+
+        @Override
+        protected void configureShell( Shell shell ) {
+          super.configureShell( shell );
+          shell.setBackground( shell.getDisplay().getSystemColor( DIALOG_COLOR ) );
+          shell.setBackgroundMode( SWT.INHERIT_FORCE );
+        }
+      };
+    int result = confirmDialog.open();
+    if ( result == 0 ) {
+      try {
+        callback.call();
+      } catch ( Exception e ) {
+        if ( mainController == null || !mainController.handleLostRepository( e ) ) {
+          messageBox.setTitle( BaseMessages.getString( PKG, "Dialog.Error" ) );
+          messageBox.setAcceptLabel( BaseMessages.getString( PKG, "Dialog.Ok" ) );
+          messageBox.setMessage( BaseMessages.getString( PKG, e.getLocalizedMessage() ) );
+          messageBox.open();
         }
       }
-
-      public void onError( XulComponent sender, Throwable t ) {
-        throw new RuntimeException( t );
-      }
-    } );
-    confirmBox.open();
+    }
   }
 
   public void deleteContent() throws Exception {
@@ -510,10 +552,7 @@ public class BrowseController extends AbstractXulEventHandler implements IUISupp
       newName = null;
     } catch ( Exception e ) {
       if ( mainController == null || !mainController.handleLostRepository( e ) ) {
-        messageBox.setTitle( BaseMessages.getString( PKG, "Dialog.Error" ) );
-        messageBox.setAcceptLabel( BaseMessages.getString( PKG, "Dialog.Ok" ) );
-        messageBox.setMessage( BaseMessages.getString( PKG, e.getLocalizedMessage() ) );
-        messageBox.open();
+        confirm( BaseMessages.getString( PKG, "Dialog.Error" ), e.getLocalizedMessage() );
       }
     }
   }
@@ -539,37 +578,11 @@ public class BrowseController extends AbstractXulEventHandler implements IUISupp
       if ( object instanceof UIRepositoryDirectory ) {
         repoDir = (UIRepositoryDirectory) object;
         newSelectedItem = repoDir.getParent();
-
-        // If content to be deleted is a folder we will display a warning message
-        // notwithstanding the folder is empty or not. If you choose to delete this folder, all its
-        // item(s) will be lost. If the user accept this, then we will delete that folder
-        // otherwise we will end this method call
-        confirmBox = (XulConfirmBox) document.createElement( "confirmbox" );
-        confirmBox.setTitle( BaseMessages.getString( PKG, "BrowseController.DeleteNonEmptyFolderWarningTitle" ) );
-        confirmBox.setMessage( BaseMessages
-          .getString( PKG, "BrowseController.DeleteFolderWarningMessage" ) );
-        confirmBox.setAcceptLabel( BaseMessages.getString( PKG, "Dialog.Ok" ) );
-        confirmBox.setCancelLabel( BaseMessages.getString( PKG, "Dialog.Cancel" ) );
-        confirmBox.addDialogCallback( new XulDialogCallback<Object>() {
-
-          public void onClose( XulComponent sender, Status returnCode, Object retVal ) {
-            if ( returnCode == Status.ACCEPT ) {
-              try {
-                deleteFolder( repoDir );
-              } catch ( Exception e ) {
-                if ( mainController == null || !mainController.handleLostRepository( e ) ) {
-                  new ErrorDialog( shell, BaseMessages.getString( PKG, "RepositoryExplorerDialog.ErrorDialog.Title" ),
-                      BaseMessages.getString( PKG, "RepositoryExplorerDialog.ErrorDialog.Message" ), e );
-                }
-              }
-            }
-          }
-
-          public void onError( XulComponent sender, Throwable t ) {
-            throw new RuntimeException( t );
-          }
-        } );
-        confirmBox.open();
+        confirm( "BrowseController.DeleteNonEmptyFolderWarningTitle", "BrowseController.DeleteFolderWarningMessage",
+          () -> {
+            deleteFolder( repoDir );
+            return null;
+          } );
         break;
       } else {
         deleteFolder( repoDir );
@@ -748,17 +761,6 @@ public class BrowseController extends AbstractXulEventHandler implements IUISupp
     }
   }
 
-  private void messageBox( String message ) {
-    messageBox( "Dialog.Error", "Dialog.Ok", message );
-  }
-
-  private void messageBox( String title, String acceptLabel, String message ) {
-    messageBox.setTitle( BaseMessages.getString( PKG, title ) );
-    messageBox.setAcceptLabel( BaseMessages.getString( PKG, acceptLabel ) );
-    messageBox.setMessage( message );
-    messageBox.open();
-  }
-
   public void onDoubleClick( Object[] selectedItems ) {
     openContent( selectedItems );
   }
@@ -891,6 +893,10 @@ public class BrowseController extends AbstractXulEventHandler implements IUISupp
     if ( contextChangeVetoers != null ) {
       contextChangeVetoers.remove( listener );
     }
+  }
+
+  protected Shell getShell() {
+    return shell;
   }
 
   private boolean contains( TYPE type, List<TYPE> typeList ) {

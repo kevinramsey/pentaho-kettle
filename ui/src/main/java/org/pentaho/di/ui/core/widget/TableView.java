@@ -94,6 +94,7 @@ import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.di.core.row.value.ValueMetaFactory;
 import org.pentaho.di.core.row.value.ValueMetaInteger;
+import org.pentaho.di.core.row.value.ValueMetaNumber;
 import org.pentaho.di.core.row.value.ValueMetaString;
 import org.pentaho.di.core.undo.TransAction;
 import org.pentaho.di.core.variables.VariableSpace;
@@ -265,8 +266,8 @@ public class TableView extends Composite {
     clearUndo();
 
     numberColumn = new ColumnInfo( "#", ColumnInfo.COLUMN_TYPE_TEXT, true, true );
-    ValueMetaInterface numberColumnValueMeta = new ValueMetaInteger( "#" );
-    numberColumnValueMeta.setConversionMask( "####0" );
+    ValueMetaInterface numberColumnValueMeta = new ValueMetaNumber( "#" );
+    numberColumnValueMeta.setConversionMask( "####0.###" );
     numberColumn.setValueMeta( numberColumnValueMeta );
 
     lsUndo = new ModifyListener() {
@@ -1326,6 +1327,9 @@ public class TableView extends Composite {
   }
 
   public void sortTable( int sortField, boolean sortingDescending ) {
+    sortTable( sortField, sortingDescending, true );
+  }
+  public void sortTable( int sortField, boolean sortingDescending, boolean resetRowNums ) {
     boolean shouldRefresh = false;
     if ( this.sortfieldLast == -1 && this.sortingDescendingLast == null ) {
       // first time through, so update
@@ -1353,6 +1357,8 @@ public class TableView extends Composite {
     if ( !shouldRefresh && table.getItemCount() == lastRowCount ) {
       return;
     }
+
+    removeEmptyRows();
 
     try {
       // First, get all info and put it in a Vector of Rows...
@@ -1487,6 +1493,9 @@ public class TableView extends Composite {
       table.setSortDirection( sortingDescending ? SWT.DOWN : SWT.UP );
 
       lastRowCount = table.getItemCount();
+      if ( resetRowNums ) {
+        setRowNums();
+      }
     } catch ( Exception e ) {
       new ErrorDialog( this.getShell(), BaseMessages.getString( PKG, "TableView.ErrorDialog.title" ), BaseMessages
         .getString( PKG, "TableView.ErrorDialog.description" ), e );
@@ -1669,7 +1678,12 @@ public class TableView extends Composite {
       table.removeAll();
       new TableItem( table, SWT.NONE );
       if ( !readonly ) {
-        edit( 0, 1 );
+        parent.getDisplay().asyncExec( new Runnable() {
+          @Override
+          public void run() {
+            edit( 0, 1 );
+          }
+        } );
       }
       this.setModified(); // timh
     }

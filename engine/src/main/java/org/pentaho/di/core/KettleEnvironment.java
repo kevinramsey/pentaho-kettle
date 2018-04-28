@@ -40,6 +40,7 @@ import org.pentaho.di.core.plugins.PartitionerPluginType;
 import org.pentaho.di.core.plugins.PluginRegistry;
 import org.pentaho.di.core.plugins.PluginTypeInterface;
 import org.pentaho.di.core.plugins.RepositoryPluginType;
+import org.pentaho.di.core.plugins.StepDialogFragmentType;
 import org.pentaho.di.core.plugins.StepPluginType;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.repository.IUser;
@@ -65,7 +66,7 @@ public class KettleEnvironment {
    * Indicates whether the Kettle environment has been initialized.
    */
   private static AtomicReference<SettableFuture<Boolean>> initialized =
-    new AtomicReference<SettableFuture<Boolean>>( null );
+    new AtomicReference<>( null );
   private static KettleLifecycleSupport kettleLifecycleSupport;
 
   /**
@@ -98,6 +99,7 @@ public class KettleEnvironment {
     init( Arrays.asList(
       RowDistributionPluginType.getInstance(),
       StepPluginType.getInstance(),
+      StepDialogFragmentType.getInstance(),
       PartitionerPluginType.getInstance(),
       JobEntryPluginType.getInstance(),
       LogTablePluginType.getInstance(),
@@ -156,8 +158,7 @@ public class KettleEnvironment {
       try {
         ready.get();
       } catch ( Throwable t ) {
-        // If it's a KettleException, throw it, otherwise wrap it in a KettleException
-        throw ( ( t instanceof KettleException ) ? (KettleException) t : new KettleException( t ) );
+        throw new KettleException( t );
       }
     }
   }
@@ -187,12 +188,14 @@ public class KettleEnvironment {
   }
 
   private static void shutdown( KettleLifecycleSupport kettleLifecycleSupport ) {
-    try {
-      kettleLifecycleSupport.onEnvironmentShutdown();
-    } catch ( Throwable t ) {
-      System.err.println( BaseMessages.getString( PKG,
-        "LifecycleSupport.ErrorInvokingKettleEnvironmentShutdownListeners" ) );
-      t.printStackTrace();
+    if ( isInitialized() ) {
+      try {
+        kettleLifecycleSupport.onEnvironmentShutdown();
+      } catch ( Throwable t ) {
+        System.err.println( BaseMessages.getString( PKG,
+          "LifecycleSupport.ErrorInvokingKettleEnvironmentShutdownListeners" ) );
+        t.printStackTrace();
+      }
     }
   }
 

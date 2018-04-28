@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Hitachi Vantara. All rights reserved.
+ * Copyright 2017-2018 Hitachi Vantara. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,23 @@
 define([
   "angular"
 ], function(angular) {
-  resize.$inject = ["$window", "$timeout"];
+  resize.$inject = ["$window", "$timeout", "$state"];
   /**
    * @param {Service} $window - A reference to the browser's window object
    * @param {Function} $timeout - Angular wrapper for window.setTimeout.
+   * @param {Object} $state - The application state object
    * @return {{restrict: string, link: link}} - resizeFiles directive
    */
-  function resize($window, $timeout) {
+  function resize($window, $timeout, $state) {
     return {
       restrict: "A",
       link: function(scope, element, attrs) {
+        var scrollClass = "";
+        $timeout(function() {
+          scrollClass = $state.is("save") ? "scrollTableSave" : "scrollTableOpen";
+        });
+
         var needsTimeout = true;
-        var openOrSave = scope.vm.wrapperClass;
-        var scrollClass = openOrSave === "open" ? "scrollTableOpen" : "scrollTableSave";
         var table = angular.element(element[0].querySelector("#filesTableBody"));
         var bodyWrapper = angular.element(element[0].querySelector("#bodyWrapper"));
         var headerWrapper = angular.element(document.querySelector("#headerWrapper"));
@@ -51,12 +55,10 @@ define([
         });
 
         scope.$watch(attrs.searchValue, function(newValue) {
-          if (newValue === "") {
-            $timeout(function() {
-              setScrollTableClass();
-              setWidths();
-            });
-          }
+          $timeout(function() {
+            setScrollTableClass();
+            setWidths();
+          });
         });
 
         scope.$watch(attrs.selectedFile, function(newValue) {
@@ -131,6 +133,6 @@ define([
 
   return {
     name: "resizeFiles",
-    options: ["$window", "$timeout", resize]
+    options: ["$window", "$timeout", "$state", resize]
   };
 });
