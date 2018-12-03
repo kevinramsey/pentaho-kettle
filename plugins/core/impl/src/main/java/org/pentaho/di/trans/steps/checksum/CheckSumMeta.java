@@ -109,7 +109,6 @@ public class CheckSumMeta extends BaseStepMeta implements StepMetaInterface {
 
   @Injection( name = "COMPATIBILITY_MODE" )
   private boolean compatibilityMode;
-  private boolean oldChecksumBehaviour;
 
   @Injection( name = "OLD_CHECKSUM_BEHAVIOR" )
   private boolean oldChecksumBehaviour;
